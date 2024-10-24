@@ -91,9 +91,9 @@ export async function signIn(
     await authenticateCredentials(email, password);
   } catch (error) {
     return { error: (error as Error).message };
-  } finally {
-    redirect("/");
   }
+  
+  redirect("/");
 }
 
 export async function signOut() {
