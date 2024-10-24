@@ -1,16 +1,19 @@
+import ToastProvider from "@/components/Toast";
 import type { Metadata } from "next";
-import localFont from "next/font/local";
+import { Gabarito, Imbue } from "next/font/google";
 import "./globals.css";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
+const gabarito = Gabarito({
+  weight: ["400", "700", "900"],
+  subsets: ["latin"],
+  variable: "--font-sans",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
+
+const imbue = Imbue({
+  weight: "800",
+  subsets: ["latin"],
+  style: ["normal"],
+  variable: "--font-serif",
 });
 
 export const metadata: Metadata = {
@@ -26,9 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`bg-zinc-950 antialiased ${gabarito.variable} ${imbue.variable} font-sans`}
       >
-        {children}
+        <ToastProvider>{children}</ToastProvider>
       </body>
     </html>
   );
