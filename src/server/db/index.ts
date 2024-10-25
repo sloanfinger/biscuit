@@ -1,27 +1,24 @@
 import { env } from "@/env";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient } from "mongodb";
 import { unstable_after as after } from "next/server";
-import * as z from "zod";
+import * as CollectionSchemas from "./collections";
+import type * as z from "zod";
 
-export const User = z.object({
-  _id: z.instanceof(ObjectId),
-  password: z.string(),
-  verification: z.literal(true).or(z.string()),
-  /**
-    WARNING: This object will be signed into a JWT and stored as a cookie, which limits its size. 
-    @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#data_storage
-  */
-  profile: z.object({
-    email: z.string().email(),
-    username: z.string().min(4),
-  }),
-});
-
-type Infer<T extends z.ZodType> = Omit<z.infer<T>, "_id">;
-
-export interface Collections {
-  users: Infer<typeof User>;
-}
+const client = new MongoClient(env.MONGO_URI);
+const db = client.db(env.DB_NAME);
+const cleanupTasks: (() => Promise<unknown>)[] = [];
+const connection = client
+  .connect()
+  .then(() => {
+    after(async () => {
+      await Promise.allSettled(cleanupTasks.map((task) => task()));
+      await client.close();
+    });
+  })
+  .catch((error: unknown) => {
+    console.error(error);
+    throw new Error("Unable to connect to database.");
+  });
 
 /**
  * Creates a new connection to the MongoDB server. This utility uses `unstable_after()` to close the database connection automatically.
@@ -29,20 +26,7 @@ export interface Collections {
  * @returns A promise. Resolves to the return value of the callback. Rejects if an error is thrown.
  */
 export default async function connect() {
-  const client = new MongoClient(env.MONGO_URI);
-  const db = client.db(env.DB_NAME);
-  const cleanupTasks: (() => Promise<unknown>)[] = [];
-
-  after(async () => {
-    await Promise.allSettled(cleanupTasks.map((task) => task()));
-    await client.close();
-  });
-
-  await client.connect().catch((error: unknown) => {
-    console.error(error);
-    throw new Error("Unable to connect to database.");
-  });
-
+  await connection;
   return {
     /**
      * A utility for accessing or operating on documents within a specified collection.
@@ -60,3 +44,12 @@ export default async function connect() {
     },
   };
 }
+
+export type Collections = {
+  [K in keyof typeof CollectionSchemas]: Omit<
+    z.infer<(typeof CollectionSchemas)[K]>,
+    "_id"
+  >;
+};
+
+export const Schema = CollectionSchemas;

@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import connect, { Collections, User } from "@/server/db";
+import connect, { type Collections, Schema } from "@/server/db";
 import { compare, hash } from "bcrypt";
 import { randomBytes } from "crypto";
 import { addDays } from "date-fns";
@@ -110,7 +110,7 @@ export async function authenticateCredentials(email: string, password: string) {
 
   const user = await from("users")
     .findOne({ "profile.email": email })
-    .then((data) => User.parseAsync(data))
+    .then((data) => Schema.users.parseAsync(data))
     .catch((error: unknown) => {
       console.error(error);
       throw new Error("Email or password is incorrect.");
@@ -151,7 +151,7 @@ export async function authenticateToken(email: string, token: string) {
 
   const user = await from("users")
     .findOne({ "profile.email": email })
-    .then((data) => User.parseAsync(data))
+    .then((data) => Schema.users.parseAsync(data))
     .catch((error: unknown) => {
       console.error(error);
       throw new Error("User does not exist.");
@@ -197,7 +197,7 @@ export async function authorize() {
     issuer: env.DB_NAME,
   });
 
-  return await User.shape.profile.parseAsync(payload).catch(() => {
+  return await Schema.users.shape.profile.parseAsync(payload).catch(() => {
     throw new Error("An unexpected server error occurred.");
   });
 }

@@ -92,7 +92,7 @@ export async function signIn(
   } catch (error) {
     return { error: (error as Error).message };
   }
-  
+
   redirect("/");
 }
 
