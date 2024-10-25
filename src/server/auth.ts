@@ -6,6 +6,7 @@ import { addDays } from "date-fns";
 import { jwtVerify, SignJWT } from "jose";
 import { cookies } from "next/headers";
 import * as SendGrid from "@sendgrid/mail";
+import { unstable_after as after } from "next/server";
 
 SendGrid.setApiKey(env.SENDGRID_API_KEY);
 
@@ -147,7 +148,7 @@ export async function authenticateCredentials(email: string, password: string) {
  * @returns The user profile.
  */
 export async function authenticateToken(email: string, token: string) {
-  const { from, after } = await connect();
+  const { from } = await connect();
 
   const user = await from("users")
     .findOne({ "profile.email": email })
@@ -165,12 +166,12 @@ export async function authenticateToken(email: string, token: string) {
     throw new Error("Token is incorrect.");
   }
 
-  after(() =>
-    from("users").updateOne(
+  after(async () => {
+    await from("users").updateOne(
       { "profile.email": email },
       { $set: { verification: true } },
-    ),
-  );
+    );
+  });
 
   const { jwt, expires } = await sign(user.profile).catch(() => {
     throw new Error("Failed to sign JWT.");
