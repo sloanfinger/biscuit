@@ -62,19 +62,21 @@ export async function addUser({
 }: Omit<Collections["users"], "verification">) {
   const { from } = await connect();
 
-  const emailExists = await from("users")
-    .findOne({ "profile.email": profile.email })
-    .then((result) => result !== null)
-    .catch(() => false);
+  const [emailExists, usernameExists] = await Promise.all([
+    from("users")
+      .findOne({ "profile.email": profile.email })
+      .then((result) => result !== null),
+    from("users")
+      .findOne({ "profile.username": profile.username })
+      .then((result) => result !== null),
+  ]).catch((error: unknown) => {
+    console.error(error);
+    throw new Error("An unexpected server error occurred.");
+  });
 
   if (emailExists) {
     throw new Error("User with email already exists.");
   }
-
-  const usernameExists = await from("users")
-    .findOne({ "profile.username": profile.username })
-    .then((result) => result !== null)
-    .catch(() => false);
 
   if (usernameExists) {
     throw new Error("User with username already exists.");
