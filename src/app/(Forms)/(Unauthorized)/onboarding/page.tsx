@@ -23,7 +23,7 @@ import {
   PiWarningBold,
   PiXBold,
 } from "react-icons/pi";
-import { useToast } from "../../../components/Toast";
+import { useToast } from "@/components/Toast";
 
 interface Validation {
   key: string;

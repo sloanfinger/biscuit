@@ -12,7 +12,7 @@ import {
   PiUserPlusBold,
   PiWarningBold,
 } from "react-icons/pi";
-import { useToast } from "../../../../components/Toast";
+import { useToast } from "@/components/Toast";
 
 export default function SignIn() {
   const [formState, formAction, isPending] = useActionState(signIn, null);
