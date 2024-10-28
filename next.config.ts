@@ -5,6 +5,7 @@ const nextConfig = {
   reactStrictMode: true,
   experimental: {
     after: true,
+    reactCompiler: true,
   },
   images: {
     remotePatterns: [

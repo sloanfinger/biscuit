@@ -12,7 +12,7 @@ import {
   PiUserPlusBold,
   PiWarningBold,
 } from "react-icons/pi";
-import { useToast } from "../../../components/Toast";
+import { useToast } from "@/components/Toast";
 
 export default function SignIn() {
   const [formState, formAction, isPending] = useActionState(signIn, null);
@@ -52,7 +52,7 @@ export default function SignIn() {
       action={formAction}
       className="flex w-full max-w-lg flex-col items-center gap-9 rounded-lg bg-zinc-900 px-5 py-6 shadow-xl sm:gap-12 sm:px-8 sm:py-12"
     >
-      <h2 className="text-3xl font-bold text-white">Welcome Back!</h2>
+      <h2 className="text-3xl font-bold text-white">Log New Music</h2>
 
       <fieldset className="w-full space-y-7">
         <label className="relative block w-full space-y-1.5">
