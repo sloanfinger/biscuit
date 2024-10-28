@@ -29,9 +29,24 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`bg-zinc-950 antialiased ${gabarito.variable} ${imbue.variable} font-sans`}
+        className={`bg-zinc-950 antialiased ${gabarito.variable} ${imbue.variable} relative font-sans`}
       >
         <ToastProvider>{children}</ToastProvider>
+        <svg className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-10">
+          <filter id="delbadeoliveiraisalegend">
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.80"
+              numOctaves="4"
+              stitchTiles="stitch"
+            />
+          </filter>
+          <rect
+            width="100%"
+            height="100%"
+            filter="url(#delbadeoliveiraisalegend)"
+          />
+        </svg>
       </body>
     </html>
   );

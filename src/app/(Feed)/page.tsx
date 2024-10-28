@@ -23,7 +23,7 @@ export default function Home() {
           </p>
 
           <p className="-mt-12 max-w-prose text-2xl text-amber-200">
-            Join the free social network by music enthusiasts, for music
+            Join the free social network made by music enthusiasts, for music
             enthusaists.
           </p>
 

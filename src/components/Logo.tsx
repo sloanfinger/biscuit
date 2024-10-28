@@ -8,8 +8,7 @@ export default function Logo() {
         className="flex items-center gap-2.5 text-3xl font-black text-amber-400"
         href="/"
       >
-        <PiVinylRecordFill className="transition-transform group-hover:animate-spin" />{" "}
-        Biscuit
+        <PiVinylRecordFill /> Biscuit
       </Link>
     </h1>
   );

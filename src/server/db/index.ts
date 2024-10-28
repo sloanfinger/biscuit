@@ -3,14 +3,21 @@ import { MongoClient } from "mongodb";
 import type * as z from "zod";
 import * as CollectionSchemas from "./collections";
 
-const client = new MongoClient(env.MONGO_URI);
+const client =
+  "__mongo_client" in globalThis
+    ? (globalThis as unknown as { __mongo_client: MongoClient }).__mongo_client
+    : new MongoClient(env.MONGO_URI);
+
+if (env.NODE_ENV === "development") {
+  (globalThis as unknown as { __mongo_client?: MongoClient }).__mongo_client =
+    client;
+}
+
 const db = client.db(env.DB_NAME);
-const connection = client
-  .connect()
-  .catch((error: unknown) => {
-    console.error(error);
-    throw new Error("Unable to connect to database.");
-  });
+const connection = client.connect().catch((error: unknown) => {
+  console.error(error);
+  throw new Error("Unable to connect to database.");
+});
 
 /**
  * Creates a new connection to the MongoDB server.

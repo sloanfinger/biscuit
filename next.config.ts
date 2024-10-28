@@ -6,6 +6,16 @@ const nextConfig = {
   experimental: {
     after: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+        port: "",
+        pathname: "/**",
+      },
+    ],
+  },
 } satisfies NextConfig;
 
 export default nextConfig;
