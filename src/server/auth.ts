@@ -21,7 +21,7 @@ async function sendVerification(email: string) {
     console.error(error);
     throw new Error("An unexpected server error occurred.");
   });
-  const link = `http://localhost:3000/onboarding/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
+  const link = `https://biscuit.sloan.fm/onboarding/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 
   await SendGrid.send({
     from: "noreply@biscuit.sloan.fm",

@@ -1,6 +1,6 @@
 "use client";
 
-import { signIn } from "@/server/actions";
+import { signIn } from "@/server/actions/auth";
 import Link from "next/link";
 import { useActionState, useEffect } from "react";
 import {

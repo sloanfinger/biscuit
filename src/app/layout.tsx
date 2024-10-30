@@ -32,7 +32,8 @@ export default function RootLayout({
         className={`bg-zinc-950 antialiased ${gabarito.variable} ${imbue.variable} relative font-sans`}
       >
         <ToastProvider>{children}</ToastProvider>
-        <svg className="pointer-events-none absolute inset-0 -z-10 h-full w-full opacity-10">
+
+        <svg className="pointer-events-none absolute left-0 top-0 -z-10 h-full w-full opacity-10">
           <filter id="delbadeoliveiraisalegend">
             <feTurbulence
               type="fractalNoise"

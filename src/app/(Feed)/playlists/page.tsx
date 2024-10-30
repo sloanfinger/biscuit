@@ -5,7 +5,7 @@ import {
   PiCaretDownBold,
   PiHeartFill,
   PiMagnifyingGlassBold,
-  PiTrendUpBold
+  PiTrendUpBold,
 } from "react-icons/pi";
 
 export default function Releases() {
@@ -13,7 +13,7 @@ export default function Releases() {
   const releases = new Array(7).fill(null);
 
   return (
-    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-3 pb-3 px-4 text-white *:rounded-lg *:bg-zinc-900">
+    <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-3 px-4 pb-3 text-white *:rounded-lg *:bg-zinc-900">
       <form className="flex flex-col gap-4 px-24 pb-8 pt-32">
         <h2 className="font-serif text-7xl">Playlists</h2>
 

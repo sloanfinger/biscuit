@@ -1,14 +1,11 @@
 "use server";
 
+import connect from "@/server/db";
 import { redirect } from "next/navigation";
-import * as z from "zod";
-import * as zfd from "zod-form-data";
-import { addUser, authenticateCredentials, deleteSession } from "./auth";
-import connect from "./db";
-
-type Result<T> = Promise<
-  (T extends never ? never : { success: T }) | { error: string }
->;
+import { z } from "zod";
+import { zfd } from "zod-form-data";
+import { Result } from ".";
+import { addUser, authenticateCredentials, deleteSession } from "../auth";
 
 export async function validateUsername(username: string): Result<boolean> {
   if (!/^[a-z_]/i.test(username)) {

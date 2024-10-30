@@ -8,7 +8,7 @@ import {
   PiFileDashedBold,
   PiGearDuotone,
   PiMapPinFill,
-  PiPencilSimpleLineBold
+  PiPencilSimpleLineBold,
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
 

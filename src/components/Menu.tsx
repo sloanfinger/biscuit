@@ -8,14 +8,20 @@ import {
   type MouseEventHandler,
   useCallback,
   useContext,
-  useRef
+  useRef,
 } from "react";
 
-type Exclusive<T extends HTMLElement,K extends keyof DetailedHTMLProps<HTMLAttributes<T>,T>> = Omit<DetailedHTMLProps<HTMLAttributes<T>,T>,K>;
+type Exclusive<
+  T extends HTMLElement,
+  K extends keyof DetailedHTMLProps<HTMLAttributes<T>, T>,
+> = Omit<DetailedHTMLProps<HTMLAttributes<T>, T>, K>;
 
 const context = createContext<MouseEventHandler<HTMLLIElement> | null>(null);
 
-export function Root({ children, ...props }: Exclusive<HTMLUListElement,"onMouseLeave">) {
+export function Root({
+  children,
+  ...props
+}: Exclusive<HTMLUListElement, "onMouseLeave">) {
   const shadowRef = useRef<HTMLSpanElement>(null);
 
   const handleMouseEnterItem = useCallback((e: MouseEvent<HTMLLIElement>) => {
@@ -53,7 +59,7 @@ export function Root({ children, ...props }: Exclusive<HTMLUListElement,"onMouse
         {children}
 
         <span
-          className="pointer-events-none fixed block rounded-md bg-amber-500/20 duration-200 -z-10 will-change-[top,left,width,height,opacity]"
+          className="pointer-events-none fixed -z-10 block rounded-md bg-amber-500/20 duration-200 will-change-[top,left,width,height,opacity]"
           ref={shadowRef}
         />
       </ul>
@@ -61,7 +67,10 @@ export function Root({ children, ...props }: Exclusive<HTMLUListElement,"onMouse
   );
 }
 
-export function Item({ children, ...props }: Exclusive<HTMLLIElement,"onMouseEnter">) {
+export function Item({
+  children,
+  ...props
+}: Exclusive<HTMLLIElement, "onMouseEnter">) {
   const handleMouseEnterItem = useContext(context);
 
   if (handleMouseEnterItem === null) {

@@ -4,7 +4,7 @@ import { createSecretKey } from "crypto";
 
 export const env = createEnv({
   server: {
-    NODE_ENV: z.enum(["production","development","test"]),
+    NODE_ENV: z.enum(["production", "development", "test"]),
     JWT_SECRET: z
       .string()
       .min(32)

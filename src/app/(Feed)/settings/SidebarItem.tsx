@@ -14,7 +14,7 @@ export default function SidebarItem({ children, href }: Props) {
   return (
     <li className="contents">
       <Link
-        className="px-3 hover:bg-zinc-900/75 py-2 rounded-md flex gap-6 font-bold"
+        className="flex gap-6 rounded-md px-3 py-2 font-bold hover:bg-zinc-900/75"
         data-active={pathname === href || undefined}
         href={href}
       >

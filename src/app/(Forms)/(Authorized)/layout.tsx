@@ -10,9 +10,5 @@ export default async function Layout({ children }: PropsWithChildren) {
     redirect("/login");
   }
 
-  return (
-    <SessionProvider value={session}>
-      {children}
-    </SessionProvider>
-  );
+  return <SessionProvider value={session}>{children}</SessionProvider>;
 }

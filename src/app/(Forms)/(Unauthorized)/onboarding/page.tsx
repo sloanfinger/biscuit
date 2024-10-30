@@ -1,6 +1,6 @@
 "use client";
 
-import { createAccount, validateUsername } from "@/server/actions";
+import { createAccount, validateUsername } from "@/server/actions/auth";
 import * as Accordion from "@radix-ui/react-accordion";
 import Link from "next/link";
 import {

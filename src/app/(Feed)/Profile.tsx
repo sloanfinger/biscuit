@@ -1,7 +1,7 @@
 "use client";
 
 import { useProfile } from "@/components/Session";
-import { signOut } from "@/server/actions";
+import { signOut } from "@/server/actions/auth";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
@@ -12,7 +12,7 @@ import {
   PiPencilSimpleLineBold,
   PiQueueBold,
   PiSignInBold,
-  PiUserCircleBold
+  PiUserCircleBold,
 } from "react-icons/pi";
 
 export default function Profile() {
@@ -68,7 +68,7 @@ export default function Profile() {
                 <PiQueueBold className="text-zinc-400" />
                 Music Queue
               </Link>
-              </Dropdown.Item>
+            </Dropdown.Item>
             <Dropdown.Item asChild>
               <Link
                 className="flex w-full items-center gap-2 px-4 py-1.5 hover:bg-black/40"

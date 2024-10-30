@@ -14,9 +14,5 @@ export function useProfile() {
 }
 
 export default function SessionProvider({ children, value }: Props) {
-  return (
-    <context.Provider value={value}>
-      {children}
-    </context.Provider>
-  )
-};
+  return <context.Provider value={value}>{children}</context.Provider>;
+}

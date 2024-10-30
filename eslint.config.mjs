@@ -1,5 +1,6 @@
 import eslint from "@eslint/js";
 import pluginNext from "@next/eslint-plugin-next";
+import pluginQuery from "@tanstack/eslint-plugin-query";
 import prettier from "eslint-config-prettier";
 import reactCompiler from "eslint-plugin-react-compiler";
 import tseslint from "typescript-eslint";
@@ -7,6 +8,7 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   eslint.configs.recommended,
   ...tseslint.configs.strictTypeChecked,
+  ...pluginQuery.configs["flat/recommended"],
   {
     languageOptions: {
       parserOptions: {

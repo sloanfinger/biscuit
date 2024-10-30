@@ -16,7 +16,13 @@ export default function SubNavItem({ children, path, profile }: Props) {
   const href = `/@${profile.username}${path}`;
 
   return (
-    <span className={pathname === href ? "-mb-1.5 pb-1 border-b-2 border-amber-500 text-white" : "contents"}>
+    <span
+      className={
+        pathname === href
+          ? "-mb-1.5 border-b-2 border-amber-500 pb-1 text-white"
+          : "contents"
+      }
+    >
       <Menu.Item>
         <Link className="block px-4 py-1.5 hover:text-white" href={href}>
           {children}
