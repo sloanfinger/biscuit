@@ -11,7 +11,7 @@ export const env = createEnv({
       .transform((secret) => createSecretKey(secret, "utf-8")),
     MONGO_URI: z.string().url(),
     DB_NAME: z.string(),
-    SENDGRID_API_KEY: z.string(),
+    SENDGRID_API_KEY: z.string().optional(),
   },
   client: {
     // NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),

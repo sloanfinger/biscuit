@@ -8,7 +8,9 @@ import { cookies } from "next/headers";
 import * as SendGrid from "@sendgrid/mail";
 import { unstable_after as after } from "next/server";
 
-SendGrid.setApiKey(env.SENDGRID_API_KEY);
+if (env.SENDGRID_API_KEY) {
+  SendGrid.setApiKey(env.SENDGRID_API_KEY);
+}
 
 /**
  * Sends a verification link to a user.
@@ -23,14 +25,18 @@ async function sendVerification(email: string) {
   });
   const link = `https://biscuit.sloan.fm/onboarding/verify?email=${encodeURIComponent(email)}&token=${encodeURIComponent(token)}`;
 
-  await SendGrid.send({
-    from: "noreply@biscuit.sloan.fm",
-    to: email,
-    subject: "Your Email Verification Link",
-    text: link,
-    html: `<a href="${link}">${link}</a>`,
-  });
-
+  if (env.SENDGRID_API_KEY) {
+    await SendGrid.send({
+      from: "noreply@biscuit.sloan.fm",
+      to: email,
+      subject: "Your Email Verification Link",
+      text: link,
+      html: `<a href="${link}">${link}</a>`,
+    });
+  } else {
+    console.log(link);
+  }
+  
   return tokenHash;
 }
 
