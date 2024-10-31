@@ -1,7 +1,7 @@
 "use client";
 
 import { useProfile } from "@/components/Session";
-import { signOut } from "@/server/actions/auth";
+import { signOut } from "@/server/actions/users";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
