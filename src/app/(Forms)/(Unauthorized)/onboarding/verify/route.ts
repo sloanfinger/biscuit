@@ -1,4 +1,5 @@
 import { authenticateToken } from "@/server/auth";
+import { cookies } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    await authenticateToken(email, token);
+    await authenticateToken(email, token, await cookies());
     return NextResponse.redirect(new URL("/", request.url));
   } catch (error) {
     console.error(error);

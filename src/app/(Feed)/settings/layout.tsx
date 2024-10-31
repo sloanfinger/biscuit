@@ -2,9 +2,10 @@ import { type PropsWithChildren } from "react";
 import SidebarItem from "./SidebarItem";
 import { redirect } from "next/navigation";
 import { authorize } from "@/server/auth";
+import { cookies } from "next/headers";
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const user = await authorize().catch(() => null);
+  const user = await authorize(await cookies()).catch(() => null);
 
   if (user === null) {
     redirect("/login");

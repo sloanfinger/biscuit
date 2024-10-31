@@ -4,9 +4,9 @@ import { compare, hash } from "bcrypt";
 import { randomBytes } from "crypto";
 import { addDays } from "date-fns";
 import { jwtVerify, SignJWT } from "jose";
-import { cookies } from "next/headers";
 import * as SendGrid from "@sendgrid/mail";
 import { unstable_after as after } from "next/server";
+import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 
 if (env.SENDGRID_API_KEY) {
   SendGrid.setApiKey(env.SENDGRID_API_KEY);
@@ -114,7 +114,7 @@ export async function addUser({
  * @param password User password.
  * @returns The user profile.
  */
-export async function authenticateCredentials(email: string, password: string) {
+export async function authenticateCredentials(email: string, password: string, cookies: ReadonlyRequestCookies) {
   const { from } = await connect();
 
   const user = await from("users")
@@ -142,7 +142,7 @@ export async function authenticateCredentials(email: string, password: string) {
   const { jwt, expires } = await sign(user.profile).catch(() => {
     throw new Error("Failed to sign JWT.");
   });
-  (await cookies()).set("jwt", jwt, { expires });
+  cookies.set("jwt", jwt, { expires });
 
   return {
     profile: user.profile,
@@ -155,7 +155,7 @@ export async function authenticateCredentials(email: string, password: string) {
  * @param password User password.
  * @returns The user profile.
  */
-export async function authenticateToken(email: string, token: string) {
+export async function authenticateToken(email: string, token: string, cookies: ReadonlyRequestCookies) {
   const { from } = await connect();
 
   const user = await from("users")
@@ -184,7 +184,7 @@ export async function authenticateToken(email: string, token: string) {
   const { jwt, expires } = await sign(user.profile).catch(() => {
     throw new Error("Failed to sign JWT.");
   });
-  (await cookies()).set("jwt", jwt, { expires });
+  cookies.set("jwt", jwt, { expires });
 
   return {
     profile: user.profile,
@@ -195,8 +195,8 @@ export async function authenticateToken(email: string, token: string) {
  * Verifies the JWT cookie stored in the request.
  * @returns The user profile.
  */
-export async function authorize() {
-  const jwt = (await cookies()).get("jwt")?.value;
+export async function authorize(cookies: ReadonlyRequestCookies) {
+  const jwt = cookies.get("jwt")?.value;
 
   if (jwt === undefined) {
     throw new Error("Not signed in.");
@@ -215,7 +215,7 @@ export async function authorize() {
  * Deletes the JWT cookie from the request.
  * @returns An acknowledgement of whether the deletion was sucessful.
  */
-export async function deleteSession() {
-  (await cookies()).delete("jwt");
+export function deleteSession(cookies: ReadonlyRequestCookies) {
+  cookies.delete("jwt");
   return { acknowledged: true };
 }

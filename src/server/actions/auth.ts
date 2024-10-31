@@ -6,6 +6,7 @@ import { z } from "zod";
 import { zfd } from "zod-form-data";
 import { Result } from ".";
 import { addUser, authenticateCredentials, deleteSession } from "../auth";
+import { cookies } from "next/headers";
 
 export async function validateUsername(username: string): Result<boolean> {
   if (!/^[a-z_]/i.test(username)) {
@@ -85,7 +86,7 @@ export async function signIn(
 ): Result<never> {
   try {
     const { email, password } = await signInSchema.parseAsync(formData);
-    await authenticateCredentials(email, password);
+    await authenticateCredentials(email, password, await cookies());
   } catch (error) {
     return { error: (error as Error).message };
   }
@@ -94,6 +95,6 @@ export async function signIn(
 }
 
 export async function signOut() {
-  await deleteSession();
+  deleteSession(await cookies());
   redirect("/");
 }

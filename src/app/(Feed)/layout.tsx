@@ -11,10 +11,11 @@ import {
   PiShootingStarBold,
 } from "react-icons/pi";
 import Profile from "./Profile";
+import { cookies } from "next/headers";
 
 export default async function Header({ children }: PropsWithChildren) {
   return (
-    <SessionProvider value={await authorize().catch(() => null)}>
+    <SessionProvider value={await authorize(await cookies()).catch(() => null)}>
       <div className="z-0 flex h-full min-h-screen flex-col text-white">
         <div className="z-10 w-full px-4">
           <nav className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 py-6">

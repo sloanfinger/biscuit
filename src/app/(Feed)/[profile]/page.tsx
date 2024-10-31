@@ -11,6 +11,7 @@ import {
   PiPencilSimpleLineBold,
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
+import { cookies } from "next/headers";
 
 async function getProfile(params: Props["params"]) {
   const tag = decodeURIComponent((await params).profile);
@@ -38,7 +39,7 @@ interface Props {
 }
 
 export default async function Profile({ params }: Props) {
-  const session = await authorize().catch(() => null);
+  const session = await authorize(await cookies()).catch(() => null);
   const profile = await getProfile(params);
 
   return (
