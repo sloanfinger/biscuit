@@ -98,7 +98,7 @@ export default function SignIn() {
         <span
           className={`col-span-full row-span-full flex items-center justify-center gap-2 transition-opacity ${isPending ? "opacity-0" : "opacity-100"}`}
         >
-          Sign
+          Sign In
           <PiSignInBold />
         </span>
         <span

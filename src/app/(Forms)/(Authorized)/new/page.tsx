@@ -2,21 +2,20 @@
 
 import { useToast } from "@/components/Toast";
 import useSearch from "@/hooks/useSearch";
-import { itunes } from "@/server/actions/search";
+import { search } from "@/server/actions/itunes";
 import * as Accordion from "@radix-ui/react-accordion";
 import Link from "next/link";
 import { useEffect } from "react";
 import {
   PiArrowLeftBold,
   PiCircleNotchBold,
-  PiFloppyDiskBackBold,
   PiMagnifyingGlassBold,
-  PiWarningBold,
+  PiWarningBold
 } from "react-icons/pi";
 
 export default function New() {
   const { publish } = useToast();
-  const { isPending, success, error, handleChange } = useSearch(itunes, {
+  const { isPending, success, error, handleChange } = useSearch(search, {
     country: "US",
     entity: "album",
     media: "music",
@@ -112,13 +111,6 @@ export default function New() {
         >
           <PiArrowLeftBold />
           Go Back
-        </button>
-        <button
-          className="hidden items-center justify-center gap-2 bg-underline"
-          type="button"
-        >
-          <PiFloppyDiskBackBold />
-          Save to Drafts
         </button>
       </p>
     </section>
