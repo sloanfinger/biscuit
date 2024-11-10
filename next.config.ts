@@ -14,6 +14,12 @@ const nextConfig = {
         port: "",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "*.mzstatic.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
 } satisfies NextConfig;

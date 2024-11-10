@@ -2,8 +2,8 @@
 
 import connect from "@/server/db";
 import { redirect } from "next/navigation";
-import { z } from "zod";
-import { zfd } from "zod-form-data";
+import * as z from "zod";
+import * as zfd from "zod-form-data";
 import { Result } from ".";
 import { addUser, authenticateCredentials, deleteSession } from "../auth";
 import { cookies } from "next/headers";
@@ -61,10 +61,7 @@ export async function createAccount(
         throw new Error("Email or password is invalid.");
       });
 
-    await addUser({
-      password,
-      profile: { username, email },
-    });
+    await addUser(username, email, password);
 
     return {
       success:

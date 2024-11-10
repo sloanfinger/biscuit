@@ -36,7 +36,7 @@ export default function Profile() {
         <Avatar.Root className="relative block size-11">
           {/* <Avatar.Image /> */}
           <Avatar.Fallback className="block h-full w-full rounded-full border-2 border-green-950 bg-gradient-to-br from-green-700 to-green-900 py-1.5 text-center font-serif text-[1.75rem] leading-none text-white opacity-90">
-            {user.username.substring(0, 2).toUpperCase()}
+            {user.avatar.displayName.substring(0, 2).toUpperCase()}
           </Avatar.Fallback>
         </Avatar.Root>
       </Dropdown.Trigger>
@@ -48,7 +48,7 @@ export default function Profile() {
           side="bottom"
         >
           <Dropdown.Label className="w-full cursor-default bg-zinc-900 py-1.5 text-center text-sm font-bold text-zinc-400">
-            @{user.username}
+            @{user.avatar.username}
           </Dropdown.Label>
           <Dropdown.Group className="py-1.5">
             <Dropdown.Item asChild>
@@ -63,7 +63,7 @@ export default function Profile() {
             <Dropdown.Item asChild>
               <Link
                 className="flex w-full items-center gap-2 px-4 py-1.5 hover:bg-black/40"
-                href={`/@${user.username}/queue`}
+                href={`/@${user.avatar.username}/queue`}
               >
                 <PiQueueBold className="text-zinc-400" />
                 Music Queue
@@ -72,7 +72,7 @@ export default function Profile() {
             <Dropdown.Item asChild>
               <Link
                 className="flex w-full items-center gap-2 px-4 py-1.5 hover:bg-black/40"
-                href={`/@${user.username}`}
+                href={`/@${user.avatar.username}`}
               >
                 <PiUserCircleBold className="text-zinc-400" />
                 Profile
@@ -81,7 +81,7 @@ export default function Profile() {
             <Dropdown.Item asChild>
               <Link
                 className="flex w-full items-center gap-2 px-4 py-1.5 hover:bg-black/40"
-                href={`/@${user.username}/drafts`}
+                href={`/@${user.avatar.username}/drafts`}
               >
                 <PiFileDashedBold className="text-zinc-400" />
                 Drafts

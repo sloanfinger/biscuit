@@ -1,16 +1,26 @@
 import { env } from "@/env";
-import connect, { type Collections, Schema } from "@/server/db";
+import connect, { Schema } from "@/server/db";
+import * as SendGrid from "@sendgrid/mail";
 import { compare, hash } from "bcrypt";
 import { randomBytes } from "crypto";
 import { addDays } from "date-fns";
 import { jwtVerify, SignJWT } from "jose";
-import * as SendGrid from "@sendgrid/mail";
-import { unstable_after as after } from "next/server";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
+import { unstable_after as after } from "next/server";
+import * as z from "zod";
 
 if (env.SENDGRID_API_KEY) {
   SendGrid.setApiKey(env.SENDGRID_API_KEY);
 }
+
+const jwtSchema = z.object({
+  id: z
+    .string()
+    .regex(/^[0-9a-f]{24}$/),
+  avatar: Schema.users.shape.profile.shape.avatar,
+});
+
+export type JWT = z.infer<typeof jwtSchema>;
 
 /**
  * Sends a verification link to a user.
@@ -18,6 +28,10 @@ if (env.SENDGRID_API_KEY) {
  * @returns A hash of the verification token to be stored in the database.
  */
 async function sendVerification(email: string) {
+  if (env.SENDGRID_API_KEY === null) {
+    return true;
+  }
+
   const token = randomBytes(256).toString("base64");
   const tokenHash = await hash(token, 10).catch((error: unknown) => {
     console.error(error);
@@ -36,7 +50,7 @@ async function sendVerification(email: string) {
   } else {
     console.log(link);
   }
-  
+
   return tokenHash;
 }
 
@@ -45,7 +59,7 @@ async function sendVerification(email: string) {
  * @param profile The user profile to include in the JWT.
  * @returns A JWT with its expiration timestamp.
  */
-async function sign(profile: Collections["users"]["profile"]) {
+async function sign(profile: z.input<typeof jwtSchema>) {
   const issued = new Date();
   const expires = addDays(new Date(), 30);
   const jwt = await new SignJWT(profile)
@@ -62,35 +76,36 @@ async function sign(profile: Collections["users"]["profile"]) {
  * Creates a new user. If successful, adds a signed JWT to the response cookie.
  * @param user The initial password, profile, etc. for the user.
  */
-export async function addUser({
-  password,
-  profile,
-}: Omit<Collections["users"], "verification">) {
+export async function addUser(
+  username: string,
+  email: string,
+  password: string,
+) {
   const { from } = await connect();
 
-  const [emailExists, usernameExists] = await Promise.all([
-    from("users")
-      .findOne({ "profile.email": profile.email })
-      .then((result) => result !== null),
-    from("users")
-      .findOne({ "profile.username": profile.username })
-      .then((result) => result !== null),
-  ]).catch((error: unknown) => {
-    console.error(error);
-    throw new Error("An unexpected server error occurred.");
-  });
+  const user = await from("users")
+    .findOne({
+      $or: [
+        { "profile.avatar.username": username },
+        { "settings.email": email },
+      ],
+    })
+    .catch((error: unknown) => {
+      console.error(error);
+      throw new Error("An unexpected server error occurred.");
+    });
 
-  if (emailExists) {
+  if (user?.settings.email === email) {
     throw new Error("User with email already exists.");
   }
 
-  if (usernameExists) {
+  if (user?.profile.avatar.username === username) {
     throw new Error("User with username already exists.");
   }
 
   const [passwordHash, verificationHash] = await Promise.all([
     hash(password, 10),
-    sendVerification(profile.email),
+    sendVerification(email),
   ]).catch((error: unknown) => {
     console.error(error);
     throw new Error("An unexpected server error occurred.");
@@ -98,9 +113,34 @@ export async function addUser({
 
   await from("users")
     .insertOne({
-      password: passwordHash,
-      verification: verificationHash,
-      profile,
+      profile: {
+        avatar: {
+          username,
+          displayName: username,
+          image: null,
+        },
+        network: {
+          followers: [],
+          following: [],
+        },
+        stats: {
+          likes: 0,
+          comments: 0,
+          artists: 0,
+          releases: 0,
+        },
+        profileBanner: null,
+        location: null,
+        bio: "",
+        queue: [],
+      },
+      settings: {
+        email,
+        password: passwordHash,
+        verification: verificationHash,
+        profileVisibility: "public",
+        musicVisibility: "public",
+      },
     })
     .catch((error: unknown) => {
       console.error(error);
@@ -114,34 +154,42 @@ export async function addUser({
  * @param password User password.
  * @returns The user profile.
  */
-export async function authenticateCredentials(email: string, password: string, cookies: ReadonlyRequestCookies) {
+export async function authenticateCredentials(
+  email: string,
+  password: string,
+  cookies: ReadonlyRequestCookies,
+) {
   const { from } = await connect();
 
   const user = await from("users")
-    .findOne({ "profile.email": email })
+    .findOne({ "settings.email": email })
     .then((data) => Schema.users.parseAsync(data))
     .catch((error: unknown) => {
       console.error(error);
       throw new Error("Email or password is incorrect.");
     });
 
-  if (!(await compare(password, user.password))) {
+  if (!(await compare(password, user.settings.password))) {
     throw new Error("Email or password is incorrect.");
   }
 
-  if (user.verification !== true) {
+  if (user.settings.verification !== true) {
     await from("users").updateOne(
-      { "profile.email": email },
-      { $set: { verification: await sendVerification(email) } },
+      { "settings.email": email },
+      { $set: { "settings.verification": await sendVerification(email) } },
     );
     throw new Error(
       "Account is not verified. A new verification email has been sent.",
     );
   }
 
-  const { jwt, expires } = await sign(user.profile).catch(() => {
+  const { jwt, expires } = await sign({
+    id: user._id.toHexString(),
+    avatar: user.profile.avatar,
+  }).catch(() => {
     throw new Error("Failed to sign JWT.");
   });
+
   cookies.set("jwt", jwt, { expires });
 
   return {
@@ -155,7 +203,11 @@ export async function authenticateCredentials(email: string, password: string, c
  * @param password User password.
  * @returns The user profile.
  */
-export async function authenticateToken(email: string, token: string, cookies: ReadonlyRequestCookies) {
+export async function authenticateToken(
+  email: string,
+  token: string,
+  cookies: ReadonlyRequestCookies,
+) {
   const { from } = await connect();
 
   const user = await from("users")
@@ -166,11 +218,11 @@ export async function authenticateToken(email: string, token: string, cookies: R
       throw new Error("User does not exist.");
     });
 
-  if (user.verification === true) {
+  if (user.settings.verification === true) {
     throw new Error("User has already verified themselves.");
   }
 
-  if (!(await compare(token, user.verification))) {
+  if (!(await compare(token, user.settings.verification))) {
     throw new Error("Token is incorrect.");
   }
 
@@ -181,7 +233,10 @@ export async function authenticateToken(email: string, token: string, cookies: R
     );
   });
 
-  const { jwt, expires } = await sign(user.profile).catch(() => {
+  const { jwt, expires } = await sign({
+    id: user._id.toHexString(),
+    avatar: user.profile.avatar,
+  }).catch(() => {
     throw new Error("Failed to sign JWT.");
   });
   cookies.set("jwt", jwt, { expires });
@@ -206,7 +261,7 @@ export async function authorize(cookies: ReadonlyRequestCookies) {
     issuer: env.DB_NAME,
   });
 
-  return await Schema.users.shape.profile.parseAsync(payload).catch(() => {
+  return await jwtSchema.parseAsync(payload).catch(() => {
     throw new Error("An unexpected server error occurred.");
   });
 }

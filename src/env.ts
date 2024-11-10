@@ -1,6 +1,6 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { z } from "zod";
 import { createSecretKey } from "crypto";
+import { z } from "zod";
 
 export const env = createEnv({
   server: {
@@ -11,7 +11,10 @@ export const env = createEnv({
       .transform((secret) => createSecretKey(secret, "utf-8")),
     MONGO_URI: z.string().url(),
     DB_NAME: z.string(),
-    SENDGRID_API_KEY: z.string().optional(),
+    SENDGRID_API_KEY: z
+      .string()
+      .startsWith("SG.")
+      .or(z.literal("null").transform(() => null)),
   },
   client: {
     // NEXT_PUBLIC_PUBLISHABLE_KEY: z.string().min(1),

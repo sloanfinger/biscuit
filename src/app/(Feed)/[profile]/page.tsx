@@ -1,6 +1,7 @@
 import * as Menu from "@/components/Menu";
 import { authorize } from "@/server/auth";
-import connect from "@/server/db";
+import connect, { type Connection } from "@/server/db";
+import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -9,21 +10,22 @@ import {
   PiGearDuotone,
   PiMapPinFill,
   PiPencilSimpleLineBold,
+  PiRssBold,
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
-import { cookies } from "next/headers";
 
-async function getProfile(params: Props["params"]) {
+async function getProfile(connection: Connection, params: Props["params"]) {
   const tag = decodeURIComponent((await params).profile);
 
   if (!tag.startsWith("@")) {
     notFound();
   }
 
-  const { from } = await connect();
+  const { from } = await connection;
+
   const user = await from("users")
     .findOne({
-      "profile.username": tag.substring(1),
+      "profile.avatar.username": tag.substring(1),
     })
     .catch(() => null);
 
@@ -39,8 +41,11 @@ interface Props {
 }
 
 export default async function Profile({ params }: Props) {
+  const connection = connect();
+  const nf = new Intl.NumberFormat("en-US");
   const session = await authorize(await cookies()).catch(() => null);
-  const profile = await getProfile(params);
+  const profile = await getProfile(connection, params);
+  // const recentReviews = await getRecentReviews();
 
   return (
     <>
@@ -67,7 +72,7 @@ export default async function Profile({ params }: Props) {
           </figure>
 
           <div className="flex flex-1 flex-col justify-center gap-1 pr-4">
-            <h2 className="text-xl font-bold">{profile.username}</h2>
+            <h2 className="text-xl font-bold">{profile.avatar.username}</h2>
             <p className="flex items-center gap-1.5 pb-1 text-sm leading-tight text-green-500">
               <PiMapPinFill /> Athens, GA
             </p>
@@ -82,9 +87,11 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.username}/albums`}
+                href={`/@${profile.avatar.username}/albums`}
               >
-                <span className="font-serif text-3xl font-bold">1,234</span>
+                <span className="font-serif text-3xl font-bold">
+                  {nf.format(profile.stats.releases)}
+                </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Albums
                 </span>
@@ -94,9 +101,11 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.username}/artists`}
+                href={`/@${profile.avatar.username}/artists`}
               >
-                <span className="font-serif text-3xl font-bold">1,234</span>
+                <span className="font-serif text-3xl font-bold">
+                  {nf.format(profile.stats.artists)}
+                </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Artists
                 </span>
@@ -106,9 +115,11 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.username}/followers`}
+                href={`/@${profile.avatar.username}/followers`}
               >
-                <span className="font-serif text-3xl font-bold">1,234</span>
+                <span className="font-serif text-3xl font-bold">
+                  {nf.format(profile.network.followers.length)}
+                </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Followers
                 </span>
@@ -118,9 +129,11 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.username}/following`}
+                href={`/@${profile.avatar.username}/following`}
               >
-                <span className="font-serif text-3xl font-bold">1,234</span>
+                <span className="font-serif text-3xl font-bold">
+                  {nf.format(profile.network.following.length)}
+                </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Following
                 </span>
@@ -159,10 +172,10 @@ export default async function Profile({ params }: Props) {
           </nav>
         </aside>
 
-        {session?.username === profile.username && (
+        {session?.avatar.username === profile.avatar.username && (
           <nav className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 rounded-lg border-2 border-dashed border-green-600 px-6 py-4">
             <p className="flex-1 text-lg font-bold text-zinc-400">
-              Welcome to your profile. This is only visible to you.
+              Welcome to your profile.
             </p>
             <p className="flex gap-2">
               <Link
@@ -174,7 +187,7 @@ export default async function Profile({ params }: Props) {
               </Link>
               <Link
                 className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
-                href={`/@${profile.username}/drafts`}
+                href={`/@${profile.avatar.username}/drafts`}
               >
                 <PiFileDashedBold className="text-2xl text-zinc-400 group-hover:text-white" />
                 Edit Drafts
@@ -190,12 +203,12 @@ export default async function Profile({ params }: Props) {
           </nav>
         )}
 
-        <section className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-t-lg bg-zinc-800 px-12 py-8">
-          {/* <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
-            New Releases
+        <section className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-lg bg-zinc-800 px-12 py-8">
+          <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
+            Recent Activity
             <PiRssBold className="-mb-0.5 -ml-0.5" />
             <span className="h-[3px] flex-1 bg-current opacity-50" />
-          </h2> */}
+          </h2>
         </section>
       </main>
     </>

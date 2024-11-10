@@ -13,7 +13,7 @@ interface Props extends PropsWithChildren {
 
 export default function SubNavItem({ children, path, profile }: Props) {
   const pathname = usePathname();
-  const href = `/@${profile.username}${path}`;
+  const href = `/@${profile.avatar.username}${path}`;
 
   return (
     <span

@@ -1,10 +1,10 @@
 "use client";
 
-import type { Collections } from "@/server/db";
+import type { JWT } from "@/server/auth";
 import { createContext, PropsWithChildren, useContext } from "react";
 
 interface Props extends PropsWithChildren {
-  value: Collections["users"]["profile"] | null;
+  value: JWT | null;
 }
 
 const context = createContext<Props["value"]>(null);

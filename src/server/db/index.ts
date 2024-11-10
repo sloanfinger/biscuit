@@ -37,6 +37,8 @@ export default async function connect() {
   };
 }
 
+export type Connection = ReturnType<typeof connect>;
+
 export type Collections = {
   [K in keyof typeof CollectionSchemas]: Omit<
     z.infer<(typeof CollectionSchemas)[K]>,
