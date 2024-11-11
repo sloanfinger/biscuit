@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { ObjectId, Timestamp } from "mongodb";
 import * as z from "zod";
 
 export const users = z.object({
@@ -47,7 +47,7 @@ export const users = z.object({
 export const reviews = z.object({
   _id: z.instanceof(ObjectId),
   ownerId: z.instanceof(ObjectId), // ID of the owner of the review
-  timestamp: z.date(),
+  timestamp: z.instanceof(Timestamp),
   isDraft: z.boolean(),
 
   releaseId: z.string(),

@@ -1,6 +1,6 @@
 "use server";
 
-import { ObjectId } from "mongodb";
+import { ObjectId, Timestamp } from "mongodb";
 import { revalidatePath } from "next/cache";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
@@ -61,7 +61,10 @@ export async function createReview(_state: unknown, formData: FormData) {
     const createResult = await from("reviews")
       .insertOne({
         ownerId,
-        timestamp: new Date(),
+        timestamp: new Timestamp({
+          t: Math.floor(new Date().getTime() / 1000),
+          i: 1,
+        }),
         isDraft: !data.shouldPublish,
         releaseId: data.releaseId,
         artistId: data.artistId,
@@ -133,11 +136,31 @@ export async function deleteReview(
     const ownerId = ObjectId.createFromHexString(session.id);
     const { from } = await connect();
 
-    const result = await from("reviews").deleteOne({ ownerId, releaseId });
+    const deleted = await from("reviews").findOneAndDelete({
+      ownerId,
+      releaseId,
+    });
 
-    if (!result.acknowledged) {
-      throw new Error("An unexpected error occurred.");
+    if (deleted === null) {
+      console.error("Review does not exist.");
+      return { success: false } as const;
     }
+
+    const other = await from("reviews").findOne({
+      ownerId,
+      artistId: deleted.artistId,
+      releaseId: { $not: { $eq: releaseId } },
+    });
+
+    await from("users").updateOne(
+      { _id: ownerId },
+      {
+        $inc: {
+          "profile.stats.releases": -1,
+          "profile.stats.artists": other ? 0 : -1,
+        },
+      },
+    );
 
     revalidatePath(revalidate);
     return { success: true } as const;

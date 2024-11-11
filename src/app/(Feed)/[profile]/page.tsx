@@ -13,8 +13,10 @@ import {
   PiRssBold,
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
+import Review, { ReviewDoc } from "@/components/Review";
+import { ObjectId } from "mongodb";
 
-async function getProfile(connection: Connection, params: Props["params"]) {
+async function getUser(connection: Connection, params: Props["params"]) {
   const tag = decodeURIComponent((await params).profile);
 
   if (!tag.startsWith("@")) {
@@ -33,7 +35,51 @@ async function getProfile(connection: Connection, params: Props["params"]) {
     notFound();
   }
 
-  return user.profile;
+  return user;
+}
+
+async function getRecentReviews(connection: Connection, id: ObjectId) {
+  const recentReviews: ReviewDoc[] = [];
+
+  const { from } = await connection;
+  const cursor = from("reviews")
+    .aggregate<ReviewDoc>([
+      {
+        $match: {
+          ownerId: id,
+          isDraft: false,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "ownerId",
+          foreignField: "_id",
+          as: "owner",
+        },
+      },
+      {
+        $set: {
+          owner: { $first: "$owner" },
+        },
+      },
+      {
+        $set: {
+          ownerAvatar: "$owner.profile.avatar",
+        },
+      },
+      {
+        $unset: ["_id", "ownerId", "owner"],
+      },
+    ])
+    .sort({ timestamp: -1 })
+    .limit(6);
+
+  for await (const doc of cursor) {
+    recentReviews.push(doc);
+  }
+
+  return recentReviews;
 }
 
 interface Props {
@@ -44,8 +90,8 @@ export default async function Profile({ params }: Props) {
   const connection = connect();
   const nf = new Intl.NumberFormat("en-US");
   const session = await authorize(await cookies()).catch(() => null);
-  const profile = await getProfile(connection, params);
-  // const recentReviews = await getRecentReviews();
+  const { profile, _id } = await getUser(connection, params);
+  const recentReviews = await getRecentReviews(connection, _id);
 
   return (
     <>
@@ -203,12 +249,20 @@ export default async function Profile({ params }: Props) {
           </nav>
         )}
 
-        <section className="mx-auto flex w-full max-w-5xl flex-col gap-8 rounded-lg bg-zinc-800 px-12 py-8">
+        <section className="mx-auto grid w-full max-w-6xl grid-cols-2 grid-rows-[repeat(2,max-content_repeat(3,1fr)_max-content)] gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
           <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
-            Recent Activity
+            Recent Reviews
             <PiRssBold className="-mb-0.5 -ml-0.5" />
             <span className="h-[3px] flex-1 bg-current opacity-50" />
           </h2>
+
+          {recentReviews.map((_, i) => (
+            <Review
+              entity="album"
+              key={`${recentReviews[i].releaseId}:${recentReviews[i].ownerAvatar.username}`}
+              review={recentReviews[i]}
+            />
+          ))}
         </section>
       </main>
     </>

@@ -14,9 +14,7 @@ if (env.SENDGRID_API_KEY) {
 }
 
 const jwtSchema = z.object({
-  id: z
-    .string()
-    .regex(/^[0-9a-f]{24}$/),
+  id: z.string().regex(/^[0-9a-f]{24}$/),
   avatar: Schema.users.shape.profile.shape.avatar,
 });
 

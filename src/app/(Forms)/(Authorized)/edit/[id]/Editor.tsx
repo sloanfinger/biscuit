@@ -16,7 +16,7 @@ import {
   PiCircleNotch,
   PiFloppyDiskBackBold,
   PiPaperPlaneTiltBold,
-  PiWarningBold
+  PiWarningBold,
 } from "react-icons/pi";
 
 interface Props {

@@ -83,12 +83,15 @@ export async function signIn(
 ): Result<never> {
   try {
     const { email, password } = await signInSchema.parseAsync(formData);
-    await authenticateCredentials(email, password, await cookies());
+    const { profile } = await authenticateCredentials(
+      email,
+      password,
+      await cookies(),
+    );
+    redirect(`/@${profile.avatar.username}`);
   } catch (error) {
     return { error: (error as Error).message };
   }
-
-  redirect("/");
 }
 
 export async function signOut() {

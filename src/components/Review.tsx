@@ -87,7 +87,7 @@ export default async function Review({ review, entity }: Props) {
               <span className="absolute bottom-0 h-5 w-full bg-gradient-to-b from-transparent to-current" />
             </span>
           ) : (
-            <figure className="flex flex-1 flex-col items-center justify-center gap-1 rounded-sm border-2 border-zinc-600 text-green-500 transition-colors hover:border-green-600 bg-zinc-900/50 hover:bg-zinc-900">
+            <figure className="flex flex-1 flex-col items-center justify-center gap-1 rounded-sm border-2 border-zinc-600 bg-zinc-900/50 text-green-500 transition-colors hover:border-green-600 hover:bg-zinc-900">
               <span className="flex items-center gap-1 text-3xl">
                 <Rating amount={review.rating} />
               </span>
