@@ -1,9 +1,7 @@
-"use client";
-
-import { useProfile } from "@/components/Session";
-import { signOut } from "@/server/actions/users";
+import { authorize } from "@/server/auth";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import {
   PiDoorOpenBold,
@@ -15,8 +13,8 @@ import {
   PiUserCircleBold,
 } from "react-icons/pi";
 
-export default function Profile() {
-  const user = useProfile();
+export default async function Profile() {
+  const user = await authorize(await cookies()).catch(() => null);
 
   if (user === null) {
     return (
@@ -100,13 +98,13 @@ export default function Profile() {
             </Dropdown.Item>
 
             <Dropdown.Item asChild>
-              <button
+              <Link
                 className="flex w-full items-center gap-2 px-4 py-1.5 text-red-500 hover:bg-red-800/25"
-                onClick={() => void signOut()}
+                href="/logout"
               >
                 <PiDoorOpenBold />
                 Sign Out
-              </button>
+              </Link>
             </Dropdown.Item>
           </Dropdown.Group>
         </Dropdown.Content>
