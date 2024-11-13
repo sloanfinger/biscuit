@@ -25,7 +25,7 @@ async function getUser(params: Props["params"]) {
 
   await connection;
   const user = await User.findOne({
-    "user.profile.avatar.username": tag.substring(1),
+    "profile.avatar.username": tag.substring(1),
   }).catch(() => null);
 
   if (user === null) {
