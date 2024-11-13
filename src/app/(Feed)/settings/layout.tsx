@@ -1,15 +1,13 @@
+import User from "@/server/models/User";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { type PropsWithChildren } from "react";
 import SidebarItem from "./SidebarItem";
-import { redirect } from "next/navigation";
-import { authorize } from "@/server/auth";
-import { cookies } from "next/headers";
 
 export default async function Layout({ children }: PropsWithChildren) {
-  const user = await authorize(await cookies()).catch(() => null);
-
-  if (user === null) {
-    redirect("/login");
-  }
+  await cookies()
+    .then(User.authorize)
+    .catch(() => redirect("/login"));
 
   return (
     <main className="relative flex-1 bg-zinc-900 px-12 pb-8 pt-16">
