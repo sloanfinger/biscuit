@@ -1,6 +1,5 @@
 "use client";
 
-import type { Collections } from "@/server/db";
 import { usePathname } from "next/navigation";
 import { type PropsWithChildren } from "react";
 import * as Menu from "@/components/Menu";
@@ -8,12 +7,12 @@ import Link from "next/link";
 
 interface Props extends PropsWithChildren {
   path: string;
-  profile: Collections["users"]["profile"];
+  username: string;
 }
 
-export default function SubNavItem({ children, path, profile }: Props) {
+export default function SubNavItem({ children, path, username }: Props) {
   const pathname = usePathname();
-  const href = `/@${profile.avatar.username}${path}`;
+  const href = `/@${username}${path}`;
 
   return (
     <span

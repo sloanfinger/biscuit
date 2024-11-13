@@ -1,4 +1,4 @@
-import { authorize } from "@/server/auth";
+import User from "@/server/models/User";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import { cookies } from "next/headers";
@@ -14,7 +14,9 @@ import {
 } from "react-icons/pi";
 
 export default async function Profile() {
-  const user = await authorize(await cookies()).catch(() => null);
+  const user = await cookies()
+    .then(User.authorize)
+    .catch(() => null);
 
   if (user === null) {
     return (

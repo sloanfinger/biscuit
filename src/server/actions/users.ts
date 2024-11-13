@@ -1,12 +1,13 @@
 "use server";
 
-import connect from "@/server/db";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
 import { Result } from ".";
-import { addUser, authenticateCredentials, deleteSession } from "../auth";
 import { cookies } from "next/headers";
+import connection from "@/server/models";
+import User from "@/server/models/User";
+import { hash } from "bcrypt";
 
 export async function validateUsername(username: string): Result<boolean> {
   if (!/^[a-z_]/i.test(username)) {
@@ -25,18 +26,17 @@ export async function validateUsername(username: string): Result<boolean> {
     return { error: "Username is too long." };
   }
 
-  const { from } = await connect();
+  try {
+    await connection;
 
-  const usernameExists = await from("users")
-    .findOne({ "profile.username": username })
-    .then((result) => result !== null)
-    .catch(() => false);
+    if ((await User.exists({ "profile.avatar.username": username })) === null) {
+      return { success: true };
+    }
 
-  if (usernameExists) {
-    return { error: "Username is already in use." };
+    return { error: "Username is in use." };
+  } catch {
+    return { error: "Unexpected server error." };
   }
-
-  return { success: true };
 }
 
 const createAccountSchema = zfd.formData({
@@ -61,7 +61,22 @@ export async function createAccount(
         throw new Error("Email or password is invalid.");
       });
 
-    await addUser(username, email, password);
+    const user = await new User({
+      profile: {
+        avatar: {
+          username,
+          displayName: username,
+        },
+      },
+      settings: {
+        email,
+        password: await hash(password, 10),
+      },
+    }).save();
+
+    if (await user.verify()) {
+      return { success: "Account created successfully." };
+    }
 
     return {
       success:
@@ -82,19 +97,22 @@ export async function signIn(
   formData: FormData,
 ): Result<never> {
   try {
-    const { email, password } = await signInSchema.parseAsync(formData);
-    const { profile } = await authenticateCredentials(
-      email,
-      password,
-      await cookies(),
-    );
-    redirect(`/@${profile.avatar.username}`);
-  } catch (error) {
-    return { error: (error as Error).message };
+    const result = await signInSchema
+      .parseAsync(formData)
+      .then(User.authenticate);
+
+    if (result === null) {
+      return { error: "Please verify your email. A new link has been sent." };
+    }
+
+    (await cookies()).set(...result.cookie);
+    redirect(`/@${result.session.avatar.username}`);
+  } catch (_error: unknown) {
+    return { error: "Username or password is incorrect" };
   }
 }
 
 export async function signOut() {
-  deleteSession(await cookies());
+  (await cookies()).delete("jwt");
   redirect("/");
 }

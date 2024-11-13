@@ -1,42 +1,43 @@
-import Review, { type ReviewDoc } from "@/components/Review";
-import connect, { type Connection } from "@/server/db";
+import ReviewCard, { type ReviewDoc } from "@/components/Review";
 import Link from "next/link";
 import { PiArrowRightBold, PiTrendUpBold } from "react-icons/pi";
 import Search from "./Search";
+import Review from "@/server/models/Review";
+import connection from "@/server/models";
 
-async function getRecentReviews(connection: Connection) {
+async function getRecentReviews() {
   const recentReviews: ReviewDoc[] = [];
 
-  const { from } = await connection;
-  const cursor = from("reviews")
-    .aggregate<ReviewDoc>([
-      {
-        $match: {
-          isDraft: false,
-        },
+  await connection;
+
+  const cursor = Review.aggregate<ReviewDoc>([
+    {
+      $match: {
+        isDraft: false,
       },
-      {
-        $lookup: {
-          from: "users",
-          localField: "ownerId",
-          foreignField: "_id",
-          as: "owner",
-        },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "owner",
+        foreignField: "_id",
+        as: "ownerRelation",
       },
-      {
-        $set: {
-          owner: { $first: "$owner" },
-        },
+    },
+    {
+      $set: {
+        ownerRelation: { $first: "$ownerRelation" },
       },
-      {
-        $set: {
-          ownerAvatar: "$owner.profile.avatar",
-        },
+    },
+    {
+      $set: {
+        ownerAvatar: "$ownerRelation.profile.avatar",
       },
-      {
-        $unset: ["_id", "ownerId", "owner"],
-      },
-    ])
+    },
+    {
+      $unset: ["_id", "owner", "ownerRelation"],
+    },
+  ])
     .sort({ timestamp: -1 })
     .limit(6);
 
@@ -48,8 +49,7 @@ async function getRecentReviews(connection: Connection) {
 }
 
 export default async function Releases() {
-  const connection = connect();
-  const recentReviews = await getRecentReviews(connection);
+  const recentReviews = await getRecentReviews();
 
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-3 px-4 pb-3 text-white">
@@ -63,7 +63,7 @@ export default async function Releases() {
         </h2>
 
         {recentReviews.map((_, i) => (
-          <Review
+          <ReviewCard
             entity="album"
             key={`${recentReviews[i].releaseId}:${recentReviews[i].ownerAvatar.username}`}
             review={recentReviews[i]}

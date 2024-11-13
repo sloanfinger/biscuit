@@ -1,6 +1,7 @@
 import { lookup } from "@/server/actions/itunes";
-import { authorize } from "@/server/auth";
-import connect from "@/server/db";
+import connection from "@/server/models";
+import Review from "@/server/models/Review";
+import User from "@/server/models/User";
 import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
@@ -21,9 +22,9 @@ interface Props {
 }
 
 export default async function ReleaseLayout({ params }: Props) {
-  const session = await authorize(await cookies()).catch(() => {
-    redirect("/login");
-  });
+  const session = await cookies()
+    .then(User.authorize)
+    .catch(() => redirect("/login"));
 
   const album = await paramSchema
     .parseAsync(await params)
@@ -38,11 +39,10 @@ export default async function ReleaseLayout({ params }: Props) {
       notFound();
     });
 
-  const { from } = await connect();
-
-  const review = await from("reviews")
+  await connection;
+  const review = await Review
     .findOne({
-      ownerId: ObjectId.createFromHexString(session.id),
+      owner: ObjectId.createFromHexString(session.id),
       releaseId: `i:${String(album.collectionId)}`,
     })
     .catch(() => null);

@@ -1,6 +1,8 @@
 import * as Menu from "@/components/Menu";
-import { authorize } from "@/server/auth";
-import connect, { type Connection } from "@/server/db";
+import ReviewCard, { ReviewDoc } from "@/components/Review";
+import connection from "@/server/models";
+import Review from "@/server/models/Review";
+import User from "@/server/models/User";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
@@ -13,23 +15,18 @@ import {
   PiRssBold,
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
-import Review, { ReviewDoc } from "@/components/Review";
-import { ObjectId } from "mongodb";
 
-async function getUser(connection: Connection, params: Props["params"]) {
+async function getUser(params: Props["params"]) {
   const tag = decodeURIComponent((await params).profile);
 
   if (!tag.startsWith("@")) {
     notFound();
   }
 
-  const { from } = await connection;
-
-  const user = await from("users")
-    .findOne({
-      "profile.avatar.username": tag.substring(1),
-    })
-    .catch(() => null);
+  await connection;
+  const user = await User.findOne({
+    "user.profile.avatar.username": tag.substring(1),
+  }).catch(() => null);
 
   if (user === null) {
     notFound();
@@ -38,48 +35,21 @@ async function getUser(connection: Connection, params: Props["params"]) {
   return user;
 }
 
-async function getRecentReviews(connection: Connection, id: ObjectId) {
-  const recentReviews: ReviewDoc[] = [];
-
-  const { from } = await connection;
-  const cursor = from("reviews")
-    .aggregate<ReviewDoc>([
-      {
-        $match: {
-          ownerId: id,
-          isDraft: false,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "ownerId",
-          foreignField: "_id",
-          as: "owner",
-        },
-      },
-      {
-        $set: {
-          owner: { $first: "$owner" },
-        },
-      },
-      {
-        $set: {
-          ownerAvatar: "$owner.profile.avatar",
-        },
-      },
-      {
-        $unset: ["_id", "ownerId", "owner"],
-      },
-    ])
-    .sort({ timestamp: -1 })
-    .limit(6);
-
-  for await (const doc of cursor) {
-    recentReviews.push(doc);
-  }
-
-  return recentReviews;
+async function getRecentReviews(user: Awaited<ReturnType<typeof getUser>>) {
+  return await Review.find({
+    owner: user._id,
+    isDraft: false,
+  })
+    .sort({ createdAt: -1 })
+    .limit(6)
+    .then(
+      (recentReviews) =>
+        recentReviews.map(({ owner, _id, ...review }) => ({
+          ownerAvatar: user.profile.avatar,
+          ...review,
+        } satisfies ReviewDoc)),
+    )
+    .catch(() => []);
 }
 
 interface Props {
@@ -87,11 +57,12 @@ interface Props {
 }
 
 export default async function Profile({ params }: Props) {
-  const connection = connect();
   const nf = new Intl.NumberFormat("en-US");
-  const session = await authorize(await cookies()).catch(() => null);
-  const { profile, _id } = await getUser(connection, params);
-  const recentReviews = await getRecentReviews(connection, _id);
+  const user = await getUser(params);
+  const recentReviews = await getRecentReviews(user);
+  const session = await cookies()
+    .then(User.authorize)
+    .catch(() => null);
 
   return (
     <>
@@ -118,7 +89,9 @@ export default async function Profile({ params }: Props) {
           </figure>
 
           <div className="flex flex-1 flex-col justify-center gap-1 pr-4">
-            <h2 className="text-xl font-bold">{profile.avatar.username}</h2>
+            <h2 className="text-xl font-bold">
+              {user.profile.avatar.username}
+            </h2>
             <p className="flex items-center gap-1.5 pb-1 text-sm leading-tight text-green-500">
               <PiMapPinFill /> Athens, GA
             </p>
@@ -133,10 +106,10 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.avatar.username}/albums`}
+                href={`/@${user.profile.avatar.username}/albums`}
               >
                 <span className="font-serif text-3xl font-bold">
-                  {nf.format(profile.stats.releases)}
+                  {nf.format(user.profile.stats.releases)}
                 </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Albums
@@ -147,10 +120,10 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.avatar.username}/artists`}
+                href={`/@${user.profile.avatar.username}/artists`}
               >
                 <span className="font-serif text-3xl font-bold">
-                  {nf.format(profile.stats.artists)}
+                  {nf.format(user.profile.stats.artists)}
                 </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Artists
@@ -161,10 +134,10 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.avatar.username}/followers`}
+                href={`/@${user.profile.avatar.username}/followers`}
               >
                 <span className="font-serif text-3xl font-bold">
-                  {nf.format(profile.network.followers.length)}
+                  {nf.format(user.profile.stats.followers)}
                 </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Followers
@@ -175,10 +148,10 @@ export default async function Profile({ params }: Props) {
             <Menu.Item>
               <Link
                 className="group flex flex-col items-center justify-center px-2 py-1"
-                href={`/@${profile.avatar.username}/following`}
+                href={`/@${user.profile.avatar.username}/following`}
               >
                 <span className="font-serif text-3xl font-bold">
-                  {nf.format(profile.network.following.length)}
+                  {nf.format(user.profile.stats.following)}
                 </span>
                 <span className="text-xs font-bold uppercase text-zinc-500 group-hover:text-amber-400">
                   Following
@@ -193,35 +166,47 @@ export default async function Profile({ params }: Props) {
         <aside className="-mx-4 w-screen border-y-2 border-zinc-600 bg-zinc-900 px-4 py-1 text-zinc-400">
           <nav className="contents">
             <Menu.Root className="relative z-0 mx-auto flex max-w-5xl items-center justify-center">
-              <SubNavItem path="" profile={profile}>
+              <SubNavItem path="" username={user.profile.avatar.username}>
                 Profile
               </SubNavItem>
-              <SubNavItem path="/reviews" profile={profile}>
+              <SubNavItem
+                path="/reviews"
+                username={user.profile.avatar.username}
+              >
                 Reviews
               </SubNavItem>
-              <SubNavItem path="/albums" profile={profile}>
+              <SubNavItem
+                path="/albums"
+                username={user.profile.avatar.username}
+              >
                 Albums
               </SubNavItem>
-              <SubNavItem path="/artists" profile={profile}>
+              <SubNavItem
+                path="/artists"
+                username={user.profile.avatar.username}
+              >
                 Artists
               </SubNavItem>
-              <SubNavItem path="/playlists" profile={profile}>
+              <SubNavItem
+                path="/playlists"
+                username={user.profile.avatar.username}
+              >
                 Playlists
               </SubNavItem>
-              <SubNavItem path="/queue" profile={profile}>
+              <SubNavItem path="/queue" username={user.profile.avatar.username}>
                 Queue
               </SubNavItem>
-              <SubNavItem path="/stats" profile={profile}>
+              <SubNavItem path="/stats" username={user.profile.avatar.username}>
                 Stats
               </SubNavItem>
             </Menu.Root>
           </nav>
         </aside>
 
-        {session?.avatar.username === profile.avatar.username && (
+        {session?.avatar.username === user.profile.avatar.username && (
           <nav className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 rounded-lg border-2 border-dashed border-green-600 px-6 py-4">
             <p className="flex-1 text-lg font-bold text-zinc-400">
-              Welcome to your profile.
+              Welcome to your user.profile.
             </p>
             <p className="flex gap-2">
               <Link
@@ -233,7 +218,7 @@ export default async function Profile({ params }: Props) {
               </Link>
               <Link
                 className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
-                href={`/@${profile.avatar.username}/drafts`}
+                href={`/@${user.profile.avatar.username}/drafts`}
               >
                 <PiFileDashedBold className="text-2xl text-zinc-400 group-hover:text-white" />
                 Edit Drafts
@@ -257,7 +242,7 @@ export default async function Profile({ params }: Props) {
           </h2>
 
           {recentReviews.map((_, i) => (
-            <Review
+            <ReviewCard
               entity="album"
               key={`${recentReviews[i].releaseId}:${recentReviews[i].ownerAvatar.username}`}
               review={recentReviews[i]}

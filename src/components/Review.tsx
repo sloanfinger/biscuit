@@ -1,5 +1,4 @@
 import { lookup } from "@/server/actions/itunes";
-import type { Collections } from "@/server/db";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -10,9 +9,12 @@ import {
   PiStarHalfFill,
 } from "react-icons/pi";
 import ReveiwToolbar from "./ReviewToolbar";
+import { InferSchema } from "@/server/models";
+import User from "@/server/models/User";
+import Review from "@/server/models/Review";
 
-export type ReviewDoc = Omit<Collections["reviews"], "ownerId"> & {
-  ownerAvatar: Collections["users"]["profile"]["avatar"];
+export type ReviewDoc = Omit<InferSchema<typeof Review>, "owner"> & {
+  ownerAvatar: InferSchema<typeof User>["profile"]["avatar"];
 };
 
 function Rating({ amount }: { amount: number }) {
@@ -36,7 +38,7 @@ interface Props {
   entity: "album";
 }
 
-export default async function Review({ review, entity }: Props) {
+export default async function ReviewCard({ review, entity }: Props) {
   const nf = new Intl.NumberFormat("en-US");
   const result = await lookup(Number(review.releaseId.split(":")[1]), {
     limit: "1",

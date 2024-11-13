@@ -1,8 +1,8 @@
-import { authorize } from "@/server/auth";
 import { cookies } from "next/headers";
 import Link from "next/link";
 import { PiPencilSimple } from "react-icons/pi";
 import ReviewDelete from "./ReviewDelete";
+import User from "@/server/models/User";
 
 interface Props {
   releaseId: string;
@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default async function ReveiwToolbar({ releaseId, username }: Props) {
-  const session = await authorize(await cookies()).catch(() => null);
+  const session = await cookies().then(User.authorize).catch(() => null);
 
   if (session === null || session.avatar.username !== username) {
     return null;

@@ -1,14 +1,15 @@
 "use server";
 
-import { ObjectId, Timestamp } from "mongodb";
+import User from "@/server/models/User";
+import { ObjectId } from "mongodb";
 import { revalidatePath } from "next/cache";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
-import { authorize } from "../auth";
-import connect from "../db";
+import connection from "../models";
+import Review from "../models/Review";
 
 const createReviewSchema = zfd.formData({
   releaseId: zfd.text(),
@@ -20,9 +21,11 @@ const createReviewSchema = zfd.formData({
 
 export async function createReview(_state: unknown, formData: FormData) {
   try {
-    const session = await authorize(await cookies()).catch(() => {
-      throw new Error("Not signed in.");
-    });
+    const session = await cookies()
+      .then(User.authorize)
+      .catch(() => {
+        throw new Error("Not signed in.");
+      });
 
     const data = await createReviewSchema
       .parseAsync(formData)
@@ -32,39 +35,32 @@ export async function createReview(_state: unknown, formData: FormData) {
       });
 
     const ownerId = ObjectId.createFromHexString(session.id);
-    const { from } = await connect();
+    await connection;
 
-    const updateResult = await from("reviews")
-      .findOneAndUpdate(
-        {
-          ownerId,
-          releaseId: data.releaseId,
+    const updateResult = await Review.findOneAndUpdate(
+      {
+        owner: ownerId,
+        releaseId: data.releaseId,
+      },
+      {
+        $set: {
+          isDraft: !data.shouldPublish,
+          rating: data.rating,
+          content: data.content ?? null,
         },
-        {
-          $currentDate: { timestamp: { $type: "timestamp" } },
-          $set: {
-            isDraft: !data.shouldPublish,
-            rating: data.rating,
-            content: data.content ?? null,
-          },
-        },
-      )
-      .catch((error: unknown) => {
-        console.error(error);
-        throw new Error("An unexpected error occurred.");
-      });
+      },
+    ).catch((error: unknown) => {
+      console.error(error);
+      throw new Error("An unexpected error occurred.");
+    });
 
     if (updateResult !== null) {
       redirect(`/@${session.avatar.username}`);
     }
 
-    const createResult = await from("reviews")
-      .insertOne({
-        ownerId,
-        timestamp: new Timestamp({
-          t: Math.floor(new Date().getTime() / 1000),
-          i: 1,
-        }),
+    const [_, otherExists] = await Promise.all([
+      await new Review({
+        owner: ownerId,
         isDraft: !data.shouldPublish,
         releaseId: data.releaseId,
         artistId: data.artistId,
@@ -72,41 +68,29 @@ export async function createReview(_state: unknown, formData: FormData) {
         content: data.content ?? null,
         likeCount: 0,
         commentCount: 0,
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-        throw new Error("An unexpected error occurred.");
-      });
-
-    if (!createResult.acknowledged) {
-      throw new Error("An unexpected error occurred.");
-    }
-
-    const other = await from("reviews")
-      .findOne({
+      }).save(),
+      Review.exists({
         ownerId,
         artistId: data.artistId,
         releaseId: { $not: { $eq: data.releaseId } },
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-        throw new Error("An unexpected error occurred.");
-      });
+      }).then((result) => result !== null),
+    ]).catch((error: unknown) => {
+      console.error(error);
+      throw new Error("An unexpected error occurred.");
+    });
 
-    await from("users")
-      .findOneAndUpdate(
-        { _id: ownerId },
-        {
-          $inc: {
-            "profile.stats.releases": 1,
-            "profile.stats.artists": other === null ? 1 : 0,
-          },
+    await Review.findOneAndUpdate(
+      { _id: ownerId },
+      {
+        $inc: {
+          "profile.stats.releases": 1,
+          "profile.stats.artists": otherExists ? 0 : 1,
         },
-      )
-      .catch((error: unknown) => {
-        console.error(error);
-        throw new Error("An unexpected error occurred.");
-      });
+      },
+    ).catch((error: unknown) => {
+      console.error(error);
+      throw new Error("An unexpected error occurred.");
+    });
 
     revalidatePath(`/@${session.avatar.username}`, "page");
     redirect(`/@${session.avatar.username}`);
@@ -129,15 +113,17 @@ export async function deleteReview(
   { releaseId, revalidate }: DeleteReviewParams,
 ) {
   try {
-    const session = await authorize(await cookies()).catch(() => {
-      throw new Error("Not signed in.");
-    });
+    const session = await cookies()
+      .then(User.authorize)
+      .catch(() => {
+        throw new Error("Not signed in.");
+      });
 
     const ownerId = ObjectId.createFromHexString(session.id);
-    const { from } = await connect();
+    await connection;
 
-    const deleted = await from("reviews").findOneAndDelete({
-      ownerId,
+    const deleted = await Review.findOneAndDelete({
+      owner: ownerId,
       releaseId,
     });
 
@@ -146,18 +132,23 @@ export async function deleteReview(
       return { success: false } as const;
     }
 
-    const other = await from("reviews").findOne({
-      ownerId,
+    const otherExists = await Review.exists({
+      owner: ownerId,
       artistId: deleted.artistId,
       releaseId: { $not: { $eq: releaseId } },
-    });
+    })
+      .then((result) => result !== null)
+      .catch((error: unknown) => {
+        console.error(error);
+        throw new Error("An unexpected error occurred.");
+      });
 
-    await from("users").updateOne(
+    await User.updateOne(
       { _id: ownerId },
       {
         $inc: {
           "profile.stats.releases": -1,
-          "profile.stats.artists": other ? 0 : -1,
+          "profile.stats.artists": otherExists ? 0 : -1,
         },
       },
     );
