@@ -49,7 +49,7 @@ const UserSchema = new Schema(
             followers: { type: Number, required: true },
             following: { type: Number, required: true },
             likes: { type: Number, required: true },
-            commments: { type: Number, required: true },
+            comments: { type: Number, required: true },
             artists: { type: Number, required: true },
             releases: { type: Number, required: true },
           },
@@ -75,7 +75,7 @@ const UserSchema = new Schema(
             },
             displayName: {
               type: String,
-              minLengt: 3,
+              minLength: 3,
               maxLength: 20,
               required: true,
             },

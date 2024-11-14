@@ -9,7 +9,6 @@ async function getRecentReviews() {
   const recentReviews: ReviewDoc[] = [];
 
   await connection;
-
   const cursor = Review.aggregate<ReviewDoc>([
     {
       $match: {

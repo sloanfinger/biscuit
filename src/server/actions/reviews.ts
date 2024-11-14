@@ -55,6 +55,7 @@ export async function createReview(_state: unknown, formData: FormData) {
     });
 
     if (updateResult !== null) {
+      revalidatePath(`/@${session.avatar.username}`, "page");
       redirect(`/@${session.avatar.username}`);
     }
 
@@ -79,7 +80,7 @@ export async function createReview(_state: unknown, formData: FormData) {
       throw new Error("An unexpected error occurred.");
     });
 
-    await Review.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { _id: ownerId },
       {
         $inc: {
