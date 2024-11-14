@@ -1,4 +1,4 @@
-import ReviewCard, { type ReviewDoc } from "@/components/Review";
+import ReviewCard, { type ReviewDoc } from "@/components/ReviewCard";
 import Link from "next/link";
 import { PiArrowRightBold, PiTrendUpBold } from "react-icons/pi";
 import Search from "./Search";

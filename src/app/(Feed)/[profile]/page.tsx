@@ -1,5 +1,5 @@
 import * as Menu from "@/components/Menu";
-import ReviewCard, { ReviewDoc } from "@/components/Review";
+import ReviewCard, { ReviewDoc } from "@/components/ReviewCard";
 import connection from "@/server/models";
 import Review from "@/server/models/Review";
 import User from "@/server/models/User";
@@ -44,10 +44,13 @@ async function getRecentReviews(user: Awaited<ReturnType<typeof getUser>>) {
     .limit(6)
     .then(
       (recentReviews) =>
-        recentReviews.map(({ owner, _id, ...review }) => ({
-          ownerAvatar: user.profile.avatar,
-          ...review,
-        } satisfies ReviewDoc)),
+        recentReviews.map((doc) => {
+          const { owner, _id, ...review } = doc.toObject();
+          return {
+            ownerAvatar: user.profile.avatar,
+            ...review,
+          } satisfies ReviewDoc;
+        }),
     )
     .catch(() => []);
 }
