@@ -166,7 +166,7 @@ export async function deleteReview(
 export async function getUserReviews(id: string) {
   try {
     //includes all User data with populate
-    const reviews = await Review.find({owner: id}.populate("owner");
+    const reviews = await Review.find({owner: id}).populate("owner");
     return reviews;
   } catch(error) {
     console.error(error);

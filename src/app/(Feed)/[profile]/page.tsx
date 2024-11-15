@@ -16,7 +16,7 @@ import {
 } from "react-icons/pi";
 import SubNavItem from "./SubNavItem";
 
-async function getUser(params: Props["params"]) {
+export async function getUser(params: Props["params"]) {
   const tag = decodeURIComponent((await params).profile);
 
   if (!tag.startsWith("@")) {
