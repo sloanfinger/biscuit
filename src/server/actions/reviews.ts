@@ -250,10 +250,17 @@ export async function deleteReview(
 
 //New Code
 //Param: id string from User schema
-export async function getUserReviews(id: string) {
+export async function getUserReviews() {
   try {
+    const session = await cookies()
+        .then(User.authorize)
+        .catch(() => {
+          throw new Error("Not signed in.");
+        });
+    const ownerId = ObjectId.createFromHexString(session.id);
+    await connection;
     //includes all User data with populate
-    const reviews = await Review.find({owner: id}).populate("owner");
+    const reviews = await Review.find({owner: ownerId});
     return reviews;
   } catch(error) {
     console.error(error);

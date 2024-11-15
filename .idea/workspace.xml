@@ -4,9 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others">
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Just needs testing">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/models/User.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/models/User.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +72,15 @@
       <option name="presentableId" value="Default" />
       <updated>1731590930027</updated>
       <workItem from="1731590932173" duration="7038000" />
-      <workItem from="1731690144745" duration="3653000" />
+      <workItem from="1731690144745" duration="9819000" />
+      <workItem from="1731901695612" duration="89000" />
+      <workItem from="1731902911600" duration="83000" />
+      <workItem from="1731903788290" duration="9000" />
+      <workItem from="1731910661165" duration="7000" />
+      <workItem from="1731936624424" duration="17000" />
+      <workItem from="1731937226131" duration="1865000" />
+      <workItem from="1731965008669" duration="845000" />
+      <workItem from="1732023167572" duration="517000" />
     </task>
     <task id="LOCAL-00001" summary="Redid original nav, most of these are empty, almost done with review's if the method works.">
       <option name="closed" value="true" />
@@ -98,7 +106,23 @@
       <option name="project" value="LOCAL" />
       <updated>1731653284607</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Almost done with reviews, needs testing to remove some errors">
+      <option name="closed" value="true" />
+      <created>1731697314239</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731697314239</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Just needs testing">
+      <option name="closed" value="true" />
+      <created>1731699742187</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1731699742187</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,14 +143,15 @@
     <MESSAGE value="Redid original nav, most of these are empty, almost done with review's if the method works." />
     <MESSAGE value="Redid original nav (my original one that i had mistakenly done trying to make them into components not the actual navbar), most of these are empty, almost done with review's if the method works." />
     <MESSAGE value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
-    <option name="LAST_COMMIT_MESSAGE" value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
+    <MESSAGE value="Almost done with reviews, needs testing to remove some errors" />
+    <MESSAGE value="Just needs testing" />
+    <option name="LAST_COMMIT_MESSAGE" value="Just needs testing" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/server/models/Review.ts</url>
-          <properties lambdaOrdinal="-1" />
           <option name="timeStamp" value="1" />
         </line-breakpoint>
       </breakpoints>

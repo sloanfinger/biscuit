@@ -5,7 +5,8 @@ import User from "@/server/models/User";
 import {redirect} from "next/navigation"
 
 interface Props {
-   params: Promise<{ profile: string }>;
+   reviews: ReviewDoc[];
+   error: string | null;
 }
 
 
@@ -23,28 +24,28 @@ export default function ReviewsPage () {
                         .catch(() => redirect("/login"));
                     const userReviews = await getUserReviews(user.id);
                     const docReviews = userReviews as unknown as ReviewDoc[];
-                    displayReviews(docReviews);
-                    //displayReviews(user, userReviews);
-                } catch (e) {
+                    displayReviews({reviews: docReviews, error: null});
+                    } catch (e) {
                     console.log(e);
                     throw new Error("An unexpected error has occurred.");
                     //redirect("/login"); //change to another place later, other strings are giving me errors
                 };
             }
-            getReviews();
+            const reviews = getReviews();
         }
     //);
 //}
 
-function displayReviews(userReviews:ReviewDoc[]) {
+function displayReviews({reviews, error}: Props) {
     return (
         <div>
-            <h1>{UserReviews.length > 0
-                ? `${userReviews[0].ownerAvatar.username}'s reviews:`
+            {error && <p>{error}</p>}
+            <h1>{reviews.length > 0
+                ? `${reviews[0].ownerAvatar.username}'s reviews:`
                 : "No Reviews Found. Please try again later."}
             </h1>
-            {userReviews.length > 0 ? (
-                userReviews.map((review: ReviewDoc) => (
+            {reviews.length > 0 ? (
+                reviews.map((review: ReviewDoc) => (
                     <ReviewCard review={review} entity={"album"} />
                 ))
             ) : (
