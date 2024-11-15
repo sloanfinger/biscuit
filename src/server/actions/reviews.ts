@@ -247,3 +247,16 @@ export async function deleteReview(
     return { error: "Failed to delete review." } as const;
   }
 }
+
+//New Code
+//Param: id string from User schema
+export async function getUserReviews(id: string) {
+  try {
+    //includes all User data with populate
+    const reviews = await Review.find({owner: id}.populate("owner");
+    return reviews;
+  } catch(error) {
+    console.error(error);
+    throw new Error("An unexpected error occurred.");
+  }
+}
