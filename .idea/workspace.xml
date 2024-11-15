@@ -4,17 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/albums/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/artists/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/folders/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/playlists/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/queue/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/stats/page.tsx" afterDir="false" />
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Redid original nav, most of these are empty, almost done with review's if the method works.">
       <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/actions/reviews.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/actions/reviews.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/models/User.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/models/User.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,8 +70,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1731590930027</updated>
-      <workItem from="1731590932173" duration="3171000" />
+      <workItem from="1731590932173" duration="3590000" />
     </task>
+    <task id="LOCAL-00001" summary="Redid original nav, most of these are empty, almost done with review's if the method works.">
+      <option name="closed" value="true" />
+      <created>1731649805577</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1731649805577</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -96,5 +96,9 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Redid original nav, most of these are empty, almost done with review's if the method works." />
+    <option name="LAST_COMMIT_MESSAGE" value="Redid original nav, most of these are empty, almost done with review's if the method works." />
   </component>
 </project>
