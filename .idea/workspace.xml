@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others">
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Almost done with reviews, needs testing to remove some errors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
     </list>
@@ -72,7 +72,7 @@
       <option name="presentableId" value="Default" />
       <updated>1731590930027</updated>
       <workItem from="1731590932173" duration="7038000" />
-      <workItem from="1731690144745" duration="3653000" />
+      <workItem from="1731690144745" duration="4966000" />
     </task>
     <task id="LOCAL-00001" summary="Redid original nav, most of these are empty, almost done with review's if the method works.">
       <option name="closed" value="true" />
@@ -98,7 +98,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731653284607</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Almost done with reviews, needs testing to remove some errors">
+      <option name="closed" value="true" />
+      <created>1731697314239</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1731697314239</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -119,7 +127,8 @@
     <MESSAGE value="Redid original nav, most of these are empty, almost done with review's if the method works." />
     <MESSAGE value="Redid original nav (my original one that i had mistakenly done trying to make them into components not the actual navbar), most of these are empty, almost done with review's if the method works." />
     <MESSAGE value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
-    <option name="LAST_COMMIT_MESSAGE" value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
+    <MESSAGE value="Almost done with reviews, needs testing to remove some errors" />
+    <option name="LAST_COMMIT_MESSAGE" value="Almost done with reviews, needs testing to remove some errors" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
