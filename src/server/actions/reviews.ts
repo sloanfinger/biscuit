@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
+import { Result } from ".";
 import connection from "../models";
 import Review from "../models/Review";
 
@@ -34,12 +35,12 @@ export async function createReview(_state: unknown, formData: FormData) {
         throw new Error("Invalid form data.");
       });
 
-    const ownerId = ObjectId.createFromHexString(session.id);
+    const author = ObjectId.createFromHexString(session.id);
     await connection;
 
     const updateResult = await Review.findOneAndUpdate(
       {
-        owner: ownerId,
+        author,
         releaseId: data.releaseId,
       },
       {
@@ -61,7 +62,7 @@ export async function createReview(_state: unknown, formData: FormData) {
 
     const [_, otherExists] = await Promise.all([
       await new Review({
-        owner: ownerId,
+        author,
         isDraft: !data.shouldPublish,
         releaseId: data.releaseId,
         artistId: data.artistId,
@@ -71,7 +72,7 @@ export async function createReview(_state: unknown, formData: FormData) {
         commentCount: 0,
       }).save(),
       Review.exists({
-        ownerId,
+        author,
         artistId: data.artistId,
         releaseId: { $not: { $eq: data.releaseId } },
       }).then((result) => result !== null),
@@ -81,7 +82,7 @@ export async function createReview(_state: unknown, formData: FormData) {
     });
 
     await User.findOneAndUpdate(
-      { _id: ownerId },
+      { _id: author },
       {
         $inc: {
           "profile.stats.releases": 1,
@@ -106,13 +107,13 @@ export async function createReview(_state: unknown, formData: FormData) {
 
 interface DeleteReviewParams {
   releaseId: string;
-  revalidate: string;
+  revalidate: [string, "page" | "layout"];
 }
 
 export async function deleteReview(
   _state: unknown,
   { releaseId, revalidate }: DeleteReviewParams,
-) {
+): Result<true> {
   try {
     const session = await cookies()
       .then(User.authorize)
@@ -120,21 +121,20 @@ export async function deleteReview(
         throw new Error("Not signed in.");
       });
 
-    const ownerId = ObjectId.createFromHexString(session.id);
+    const author = ObjectId.createFromHexString(session.id);
     await connection;
 
     const deleted = await Review.findOneAndDelete({
-      owner: ownerId,
+      author,
       releaseId,
     });
 
     if (deleted === null) {
-      console.error("Review does not exist.");
-      return { success: false } as const;
+      throw new Error("Review does not exist.");
     }
 
     const otherExists = await Review.exists({
-      owner: ownerId,
+      author,
       artistId: deleted.artistId,
       releaseId: { $not: { $eq: releaseId } },
     })
@@ -145,7 +145,7 @@ export async function deleteReview(
       });
 
     await User.updateOne(
-      { _id: ownerId },
+      { _id: author },
       {
         $inc: {
           "profile.stats.releases": -1,
@@ -154,7 +154,7 @@ export async function deleteReview(
       },
     );
 
-    revalidatePath(revalidate);
+    revalidatePath(...revalidate);
     return { success: true } as const;
   } catch (error: unknown) {
     console.error(error);

@@ -1,11 +1,10 @@
 "use client";
 
+import SearchResult from "@/components/SearchResult";
 import { useToast } from "@/components/Toast";
 import useSearch from "@/hooks/useSearch";
 import { search } from "@/server/actions/itunes";
 import * as Accordion from "@radix-ui/react-accordion";
-import Image from "next/image";
-import Link from "next/link";
 import { useEffect } from "react";
 import {
   PiCircleNotchBold,
@@ -65,31 +64,9 @@ export default function New() {
           <Accordion.Content asChild>
             <article className="overflow-hidden text-white data-[state=closed]:animate-slideUp data-[state=open]:animate-slideDown">
               <ul className="grid grid-cols-4 gap-x-2 gap-y-1.5">
-                {success.map((album) => (
-                  <li className="contents" key={album.collectionId}>
-                    <Link
-                      className="relative flex flex-col gap-4 rounded-md px-3 py-3.5 transition-[box-shadow,background-color] duration-100 hover:bg-zinc-800 hover:shadow-md active:shadow-sm"
-                      href={`/edit/i:${album.collectionId.toString()}`}
-                    >
-                      <figure className="contents">
-                        <Image
-                          alt=""
-                          className="aspect-square h-auto w-full rounded-sm object-cover"
-                          width={256}
-                          height={256}
-                          src={album.artworkUrl100.replace(
-                            "100x100",
-                            "256x256",
-                          )}
-                        />
-                        <figcaption className="flex flex-col gap-1 leading-tight">
-                          <span className="block">{album.collectionName}</span>
-                          <span className="block text-sm text-zinc-400">
-                            {album.artistName}
-                          </span>
-                        </figcaption>
-                      </figure>
-                    </Link>
+                {success.map((release) => (
+                  <li className="contents" key={release.collectionId}>
+                    <SearchResult href="/edit" release={release} />
                   </li>
                 ))}
               </ul>

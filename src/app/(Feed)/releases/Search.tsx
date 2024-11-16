@@ -1,18 +1,17 @@
 "use client";
 
 import Expandable from "@/components/Expandable";
+import SearchResult from "@/components/SearchResult";
 import { useToast } from "@/components/Toast";
 import useSearch from "@/hooks/useSearch";
 import { search } from "@/server/actions/itunes";
-import Link from "next/link";
 import { useEffect } from "react";
 import {
-  PiMagnifyingGlassBold,
   PiCaretDownBold,
-  PiWarningBold,
   PiCircleNotchBold,
+  PiMagnifyingGlassBold,
+  PiWarningBold,
 } from "react-icons/pi";
-import Image from "next/image";
 
 export default function Search() {
   const { publish } = useToast();
@@ -69,33 +68,9 @@ export default function Search() {
           <article className="pt-3">
             <ul className="rounded-lg bg-zinc-900 px-24 py-8">
               <ul className="grid grid-cols-6 gap-x-2 gap-y-1.5">
-                {success.map((album) => (
-                  <li className="contents" key={album.collectionId}>
-                    <Link
-                      className="relative flex flex-col gap-4 rounded-md px-3 py-3.5 transition-[box-shadow,background-color] duration-100 hover:bg-zinc-800 hover:shadow-md active:shadow-sm"
-                      href={`/releases/i:${album.collectionId.toString()}`}
-                    >
-                      <figure className="contents">
-                        <Image
-                          alt=""
-                          className="aspect-square h-auto w-full rounded-sm object-cover"
-                          width={256}
-                          height={256}
-                          src={album.artworkUrl100.replace(
-                            "100x100",
-                            "256x256",
-                          )}
-                        />
-                        <figcaption className="flex flex-col gap-1">
-                          <span className="block text-lg font-bold leading-tight">
-                            {album.collectionName}
-                          </span>
-                          <span className="block leading-tight text-zinc-400">
-                            {album.artistName}
-                          </span>
-                        </figcaption>
-                      </figure>
-                    </Link>
+                {success.map((release) => (
+                  <li className="contents" key={release.collectionId}>
+                    <SearchResult href="/releases" release={release} />
                   </li>
                 ))}
               </ul>

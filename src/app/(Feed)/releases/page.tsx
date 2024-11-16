@@ -1,47 +1,24 @@
-import ReviewCard, { type ReviewDoc } from "@/components/ReviewCard";
+import ReviewCard, { type PopulatedReview } from "@/components/ReviewCard";
+import connection from "@/server/models";
+import Review from "@/server/models/Review";
+import { Document, Types } from "mongoose";
 import Link from "next/link";
 import { PiArrowRightBold, PiTrendUpBold } from "react-icons/pi";
 import Search from "./Search";
-import Review from "@/server/models/Review";
-import connection from "@/server/models";
 
 async function getRecentReviews() {
-  const recentReviews: ReviewDoc[] = [];
+  const recentReviews: PopulatedReview[] = [];
 
   await connection;
-  const cursor = Review.aggregate<ReviewDoc>([
-    {
-      $match: {
-        isDraft: false,
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "owner",
-        foreignField: "_id",
-        as: "ownerRelation",
-      },
-    },
-    {
-      $set: {
-        ownerRelation: { $first: "$ownerRelation" },
-      },
-    },
-    {
-      $set: {
-        ownerAvatar: "$ownerRelation.profile.avatar",
-      },
-    },
-    {
-      $unset: ["_id", "owner", "ownerRelation"],
-    },
-  ])
+  const cursor = Review.find<
+    Document<Types.ObjectId, unknown, PopulatedReview>
+  >({ isDraft: false })
+    .populate("author", "profile.avatar")
     .sort({ timestamp: -1 })
     .limit(6);
 
   for await (const doc of cursor) {
-    recentReviews.push(doc);
+    recentReviews.push(doc.toObject());
   }
 
   return recentReviews;
@@ -64,7 +41,7 @@ export default async function Releases() {
         {recentReviews.map((_, i) => (
           <ReviewCard
             entity="album"
-            key={`${recentReviews[i].releaseId}:${recentReviews[i].ownerAvatar.username}`}
+            key={`${recentReviews[i].releaseId}:${recentReviews[i].author.profile.avatar.username}`}
             review={recentReviews[i]}
           />
         ))}

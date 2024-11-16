@@ -7,7 +7,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { Schema } from "mongoose";
 import { ReadonlyRequestCookies } from "next/dist/server/web/spec-extension/adapters/request-cookies";
 import * as z from "zod";
-import { safeModel } from ".";
+import { compileOnce } from ".";
 
 type Credentials = { email: string } & (
   | { password: string }
@@ -27,13 +27,15 @@ const jwtSchema = z.object({
   }),
 });
 
+export type Token = z.infer<typeof jwtSchema>;
+
 const UserSchema = new Schema(
   {
     profile: {
       type: {
         profileBanner: { type: String, default: null },
         location: { type: String, default: null },
-        bio: { type: String, required: true, default: "", trim: true },
+        bio: { type: String, required: false, default: null, trim: true },
         queue: {
           type: [
             {
@@ -146,7 +148,7 @@ const UserSchema = new Schema(
        * @returns Data to be stored in a JWT. Data will be `null` if the user needs to complete verification
        */
       async authenticate(credentials: Credentials) {
-        const user = await this.findOne({
+        const user = await User.findOne({
           "settings.email": credentials.email,
         });
 
@@ -159,8 +161,6 @@ const UserSchema = new Schema(
             throw new Error("Password is incorrect");
           }
 
-          // @ts-expect-error `verify()` will be defined by the time this function is called, but Typescript doesn't know that. And telling it is more trouble than it's worth.
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           if (!(await user.verify())) {
             return null;
           }
@@ -221,5 +221,5 @@ const UserSchema = new Schema(
   },
 );
 
-const User = safeModel("User", UserSchema);
+const User = compileOnce("User", UserSchema);
 export default User;

@@ -1,7 +1,9 @@
-import User from "@/server/models/User";
+"use client";
+
+import { signOut } from "@/server/actions/users";
+import { Token } from "@/server/models/User";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
-import { cookies } from "next/headers";
 import Link from "next/link";
 import {
   PiDoorOpenBold,
@@ -13,11 +15,11 @@ import {
   PiUserCircleBold,
 } from "react-icons/pi";
 
-export default async function Profile() {
-  const user = await cookies()
-    .then(User.authorize)
-    .catch(() => null);
+interface Props {
+  user: Token | null;
+}
 
+export default function Profile({ user }: Props) {
   if (user === null) {
     return (
       <Link
@@ -100,13 +102,13 @@ export default async function Profile() {
             </Dropdown.Item>
 
             <Dropdown.Item asChild>
-              <Link
+              <button
                 className="flex w-full items-center gap-2 px-4 py-1.5 text-red-500 hover:bg-red-800/25"
-                href="/logout"
+                onClick={() => void signOut()}
               >
                 <PiDoorOpenBold />
                 Sign Out
-              </Link>
+              </button>
             </Dropdown.Item>
           </Dropdown.Group>
         </Dropdown.Content>
