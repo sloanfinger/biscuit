@@ -59,7 +59,7 @@ export default function Profile({ user }: Props) {
                 href="new"
               >
                 <PiPencilSimpleLineBold className="text-zinc-400" />
-                Log New Music
+                Create Review
               </Link>
             </Dropdown.Item>
             <Dropdown.Item asChild>

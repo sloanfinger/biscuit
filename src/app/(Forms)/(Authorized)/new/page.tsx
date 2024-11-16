@@ -33,7 +33,7 @@ export default function New() {
 
   return (
     <>
-      <h2 className="text-3xl font-bold text-white">Log Listening Session</h2>
+      <h2 className="text-3xl font-bold text-white">Create Album Review</h2>
 
       <fieldset className="items-cente flex w-full gap-3">
         <label className="relative block w-full flex-1 space-y-1.5">
