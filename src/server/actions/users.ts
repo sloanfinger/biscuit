@@ -8,6 +8,7 @@ import { cookies } from "next/headers";
 import connection from "@/server/models";
 import User from "@/server/models/User";
 import { hash } from "bcrypt";
+import { isRedirectError } from "next/dist/client/components/redirect";
 
 export async function validateUsername(username: string): Result<boolean> {
   if (!/^[a-z_]/i.test(username)) {
@@ -72,7 +73,11 @@ export async function createAccount(
         email,
         password: await hash(password, 10),
       },
-    }).save();
+    })
+      .save()
+      .catch(() => {
+        throw new Error("This email is already in use.");
+      });
 
     if (await user.verify()) {
       return { success: "Account created successfully." };
@@ -107,7 +112,12 @@ export async function signIn(
 
     (await cookies()).set(...result.cookie);
     redirect(`/@${result.session.avatar.username}`);
-  } catch (_error: unknown) {
+  } catch (error: unknown) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
+    console.error(error);
     return { error: "Username or password is incorrect" };
   }
 }

@@ -1,10 +1,10 @@
 import { Schema } from "mongoose";
-import { safeModel } from ".";
+import { compileOnce } from ".";
 import User from "./User";
 
 const ReviewSchema = new Schema(
   {
-    owner: { type: Schema.Types.ObjectId, ref: User, required: true },
+    author: { type: Schema.Types.ObjectId, ref: User, required: true },
     isDraft: { type: Boolean, required: true },
     releaseId: { type: String, required: true },
     artistId: { type: String, required: true },
@@ -19,5 +19,5 @@ const ReviewSchema = new Schema(
 ReviewSchema.index({ owner: 1, releaseId: 1 }, { unique: true });
 ReviewSchema.index({ owner: 1, artistId: 1 });
 
-const Review = safeModel("Review", ReviewSchema);
+const Review = compileOnce("Review", ReviewSchema);
 export default Review;

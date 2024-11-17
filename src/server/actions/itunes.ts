@@ -1,36 +1,38 @@
 "use server";
 
 import * as z from "zod";
+import { Result } from ".";
 
-const ItunesResults = <T extends z.ZodRawShape>(shape: T) =>
+const ItunesResults = <T extends z.SomeZodObject>(schema: T) =>
   z.object({
-    results: z.array(z.object(shape)),
+    results: z
+      .array(z.unknown())
+      .transform((results) =>
+        results
+          .map((item) => schema.safeParse(item).data)
+          .filter((item): item is z.infer<T> => item !== undefined),
+      ),
   });
 
-const Albums = ItunesResults({
-  artistId: z.number(),
-  artistName: z.string(),
-  artistViewUrl: z.string().url(),
-  artworkUrl60: z.string().url(),
-  artworkUrl100: z.string().url(),
-  collectionCensoredName: z.string(),
-  collectionExplicitness: z.string(),
-  collectionId: z.number(),
-  collectionName: z.string(),
-  collectionPrice: z.number().optional(),
-  collectionType: z.string(),
-  collectionViewUrl: z.string().url(),
-  contentAdvisoryRating: z.string().optional(),
-  copyright: z.string(),
-  country: z.string(),
-  currency: z.string(),
-  primaryGenreName: z.string(),
-  releaseDate: z.string().datetime(),
-  trackCount: z.number(),
-  wrapperType: z.string(),
-});
+const Releases = ItunesResults(
+  z.object({
+    wrapperType: z.literal("collection"),
+    collectionExplicitness: z.enum(["explicit", "cleaned", "notExplicit"]),
+    artistId: z.number().transform((id) => `i:${String(id)}`),
+    collectionId: z.number().transform((id) => `i:${String(id)}`),
+    collectionName: z.string(),
+    collectionCensoredName: z.string(),
+    artistName: z.string(),
+    artworkUrl100: z.string().url().optional(),
+    collectionType: z.string(),
+    contentAdvisoryRating: z.string().optional(),
+    primaryGenreName: z.string().optional(),
+    releaseDate: z.string().datetime(),
+    trackCount: z.number(),
+  }),
+);
 
-export type Album = z.infer<typeof Albums>["results"][number];
+export type Release = z.infer<typeof Releases>["results"][number];
 
 interface SearchParams {
   term: string;
@@ -60,7 +62,7 @@ export async function search(
 
   try {
     const json: unknown = await response.json();
-    const data = await Albums.parseAsync(json);
+    const data = await Releases.parseAsync(json);
 
     return {
       success: data.results,
@@ -77,9 +79,9 @@ interface LookupParams {
   limit?: string;
 }
 
-export async function lookup(id: number, params: Omit<LookupParams, "id">) {
+export async function lookup(id: string, params: Omit<LookupParams, "id">): Result<Release[]> {
   const urlSearchParams = new URLSearchParams({
-    id: id.toString(),
+    id: id.split(":")[1],
     ...params,
   } satisfies LookupParams);
 
@@ -92,11 +94,12 @@ export async function lookup(id: number, params: Omit<LookupParams, "id">) {
   }
 
   try {
-    const json: unknown = await response.json();
-    const data = await Albums.parseAsync(json);
+    const { results } = await response
+      .json()
+      .then((json) => Releases.parseAsync(json));
 
     return {
-      success: data.results,
+      success: results,
     };
   } catch (error) {
     console.error(error);

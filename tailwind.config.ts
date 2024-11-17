@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import containerQueriesPlugin from "@tailwindcss/container-queries";
 import formsPlugin from "@tailwindcss/forms";
 import defaultTheme from "tailwindcss/defaultTheme";
 import plugin from "tailwindcss/plugin";
@@ -90,6 +91,7 @@ const config: Config = {
     },
   },
   plugins: [
+    containerQueriesPlugin,
     formsPlugin,
     plugin(({ addUtilities }) => {
       addUtilities({

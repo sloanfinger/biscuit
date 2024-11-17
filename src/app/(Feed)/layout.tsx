@@ -1,5 +1,7 @@
 import Logo from "@/components/Logo";
 import * as Menu from "@/components/Menu";
+import User from "@/server/models/User";
+import { cookies } from "next/headers";
 import Link from "next/link";
 import { type PropsWithChildren } from "react";
 import {
@@ -10,7 +12,11 @@ import {
 } from "react-icons/pi";
 import Profile from "./Profile";
 
-export default function Header({ children }: PropsWithChildren) {
+export default async function Header({ children }: PropsWithChildren) {
+  const user = await cookies()
+    .then(User.authorize)
+    .catch(() => null);
+
   return (
     <div className="z-0 flex h-full min-h-screen flex-col text-white">
       <div className="z-10 w-full px-4">
@@ -59,7 +65,7 @@ export default function Header({ children }: PropsWithChildren) {
             </Menu.Item>
           </Menu.Root>
 
-          <Profile />
+          <Profile user={user} />
         </nav>
       </div>
 

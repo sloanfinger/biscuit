@@ -1,6 +1,12 @@
 import type { Result } from "@/server/actions";
 import { useCallback, useRef, useState } from "react";
 
+/**
+ * A hook for handling searches while a user is typing.
+ * @param search A server action which returns an array of search results.
+ * @param deps Any dependencies on which the server action relies.
+ * @returns The most recent success/error states, an `isPending` state, and a `handleChange` event handler.
+ */
 export default function useSearch<Deps extends unknown[], T>(
   search: (query: string, ...deps: Deps) => Result<T[]>,
   ...deps: Deps

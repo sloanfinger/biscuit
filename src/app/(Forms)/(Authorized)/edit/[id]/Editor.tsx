@@ -2,7 +2,7 @@
 
 import RatingInput from "@/components/RatingInput";
 import { useToast } from "@/components/Toast";
-import type { Album } from "@/server/actions/itunes";
+import type { Release } from "@/server/actions/itunes";
 import { createReview } from "@/server/actions/reviews";
 import Image from "next/image";
 import {
@@ -25,7 +25,7 @@ interface Props {
     content: string;
     shouldPublish: boolean;
   };
-  release: Album;
+  release: Release;
 }
 
 export default function Editor({ defaultValue, release }: Props) {
@@ -53,13 +53,17 @@ export default function Editor({ defaultValue, release }: Props) {
     <form className="contents" action={formAction}>
       <h2 className="contents">
         <figure className="flex w-full items-center gap-6">
-          <Image
-            alt=""
-            className="size-28 rounded-sm object-cover"
-            src={release.artworkUrl100.replace("100x100", "256x256")}
-            height={112}
-            width={112}
-          />
+          <span className="relative size-28 overflow-hidden rounded-sm">
+            {release.artworkUrl100 && (
+              <Image
+                alt=""
+                className="absolute inset-0 size-full object-cover"
+                src={release.artworkUrl100.replace("100x100", "256x256")}
+                height={112}
+                width={112}
+              />
+            )}
+          </span>
           <figcaption className="flex flex-1 flex-col gap-1">
             <span className="text-3xl font-bold text-white">
               {release.collectionName}
@@ -75,13 +79,13 @@ export default function Editor({ defaultValue, release }: Props) {
         <input
           className="hidden"
           name="releaseId"
-          value={`i:${String(release.collectionId)}`}
+          value={release.collectionId}
           readOnly
         />
         <input
           className="hidden"
           name="artistId"
-          value={`i:${String(release.artistId)}`}
+          value={release.artistId}
           readOnly
         />
 

@@ -1,7 +1,6 @@
 import * as Menu from "@/components/Menu";
-import ReviewCard, { ReviewDoc } from "@/components/ReviewCard";
+import Reviews from "@/components/Reviews";
 import connection from "@/server/models";
-import Review from "@/server/models/Review";
 import User from "@/server/models/User";
 import { cookies } from "next/headers";
 import Image from "next/image";
@@ -35,34 +34,13 @@ async function getUser(params: Props["params"]) {
   return user;
 }
 
-async function getRecentReviews(user: Awaited<ReturnType<typeof getUser>>) {
-  return await Review.find({
-    owner: user._id,
-    isDraft: false,
-  })
-    .sort({ createdAt: -1 })
-    .limit(6)
-    .then(
-      (recentReviews) =>
-        recentReviews.map((doc) => {
-          const { owner, _id, ...review } = doc.toObject();
-          return {
-            ownerAvatar: user.profile.avatar,
-            ...review,
-          } satisfies ReviewDoc;
-        }),
-    )
-    .catch(() => []);
-}
-
 interface Props {
   params: Promise<{ profile: string }>;
 }
 
-export default async function Profile({ params }: Props) {
+export default async function ProfilePage({ params }: Props) {
   const nf = new Intl.NumberFormat("en-US");
   const user = await getUser(params);
-  const recentReviews = await getRecentReviews(user);
   const session = await cookies()
     .then(User.authorize)
     .catch(() => null);
@@ -209,7 +187,7 @@ export default async function Profile({ params }: Props) {
         {session?.avatar.username === user.profile.avatar.username && (
           <nav className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 rounded-lg border-2 border-dashed border-green-600 px-6 py-4">
             <p className="flex-1 text-lg font-bold text-zinc-400">
-              Welcome to your user.profile.
+              Welcome to your profile.
             </p>
             <p className="flex gap-2">
               <Link
@@ -237,20 +215,14 @@ export default async function Profile({ params }: Props) {
           </nav>
         )}
 
-        <section className="mx-auto grid w-full max-w-6xl grid-cols-2 grid-rows-[repeat(2,max-content_repeat(3,1fr)_max-content)] gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
+        <section className="mx-auto grid w-full max-w-6xl grid-cols-2 grid-rows-[repeat(2,max-content_1fr_1fr_max-content)] gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
           <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
             Recent Reviews
             <PiRssBold className="-mb-0.5 -ml-0.5" />
             <span className="h-[3px] flex-1 bg-current opacity-50" />
           </h2>
 
-          {recentReviews.map((_, i) => (
-            <ReviewCard
-              entity="album"
-              key={`${recentReviews[i].releaseId}:${recentReviews[i].ownerAvatar.username}`}
-              review={recentReviews[i]}
-            />
-          ))}
+          <Reviews author={user._id.toHexString()} limit={6} sortBy="recent" />
         </section>
       </main>
     </>

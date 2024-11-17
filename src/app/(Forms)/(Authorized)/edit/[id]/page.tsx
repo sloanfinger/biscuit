@@ -5,20 +5,12 @@ import User from "@/server/models/User";
 import { ObjectId } from "mongodb";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-import * as z from "zod";
 import Editor from "./Editor";
 
-const paramSchema = z
-  .object({
-    id: z
-      .string()
-      .transform((str) => decodeURIComponent(str).split(":"))
-      .pipe(z.tuple([z.enum(["i"]), z.coerce.number()])),
-  })
-  .transform(({ id }) => id);
-
 interface Props {
-  params: Promise<unknown>;
+  params: Promise<{
+    id: string;
+  }>;
 }
 
 export default async function ReleaseLayout({ params }: Props) {
@@ -26,11 +18,12 @@ export default async function ReleaseLayout({ params }: Props) {
     .then(User.authorize)
     .catch(() => redirect("/login"));
 
-  const album = await paramSchema
-    .parseAsync(await params)
-    .then(([_source, id]) => lookup(id, { entity: "album", limit: "1" }))
+  const album = await params
+    .then(({ id }) =>
+      lookup(decodeURIComponent(id), { entity: "album", limit: "1" }),
+    )
     .then((result) =>
-      result.success && result.success.length >= 1
+      "success" in result && result.success.length >= 1
         ? result.success[0]
         : notFound(),
     )
@@ -40,12 +33,10 @@ export default async function ReleaseLayout({ params }: Props) {
     });
 
   await connection;
-  const review = await Review
-    .findOne({
-      owner: ObjectId.createFromHexString(session.id),
-      releaseId: `i:${String(album.collectionId)}`,
-    })
-    .catch(() => null);
+  const review = await Review.findOne({
+    author: ObjectId.createFromHexString(session.id),
+    releaseId: album.collectionId,
+  }).catch(() => null);
 
   return (
     <Editor
