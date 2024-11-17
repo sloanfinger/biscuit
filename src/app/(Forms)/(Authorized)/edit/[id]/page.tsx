@@ -23,7 +23,7 @@ export default async function ReleaseLayout({ params }: Props) {
       lookup(decodeURIComponent(id), { entity: "album", limit: "1" }),
     )
     .then((result) =>
-      result.success && result.success.length >= 1
+      "success" in result && result.success.length >= 1
         ? result.success[0]
         : notFound(),
     )
