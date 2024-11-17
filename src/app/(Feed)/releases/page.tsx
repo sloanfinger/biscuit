@@ -1,32 +1,9 @@
-import ReviewCard, { type PopulatedReview } from "@/components/ReviewCard";
-import connection from "@/server/models";
-import Review from "@/server/models/Review";
-import { Document, Types } from "mongoose";
+import Reviews from "@/components/Reviews";
 import Link from "next/link";
 import { PiArrowRightBold, PiTrendUpBold } from "react-icons/pi";
 import Search from "./Search";
 
-async function getRecentReviews() {
-  const recentReviews: PopulatedReview[] = [];
-
-  await connection;
-  const cursor = Review.find<
-    Document<Types.ObjectId, unknown, PopulatedReview>
-  >({ isDraft: false })
-    .populate("author", "profile.avatar")
-    .sort({ timestamp: -1 })
-    .limit(6);
-
-  for await (const doc of cursor) {
-    recentReviews.push(doc.toObject());
-  }
-
-  return recentReviews;
-}
-
-export default async function Releases() {
-  const recentReviews = await getRecentReviews();
-
+export default function Releases() {
   return (
     <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-3 px-4 pb-3 text-white">
       <Search />
@@ -38,13 +15,7 @@ export default async function Releases() {
           <span className="h-[3px] flex-1 bg-current opacity-50" />
         </h2>
 
-        {recentReviews.map((_, i) => (
-          <ReviewCard
-            entity="album"
-            key={`${recentReviews[i].releaseId}:${recentReviews[i].author.profile.avatar.username}`}
-            review={recentReviews[i]}
-          />
-        ))}
+        <Reviews sortBy="trending" limit={6} />
 
         <div className="col-span-full -mt-4 flex items-end justify-end">
           <Link

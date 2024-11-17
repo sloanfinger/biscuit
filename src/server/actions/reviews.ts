@@ -2,6 +2,7 @@
 
 import User from "@/server/models/User";
 import { ObjectId } from "mongodb";
+import type { Document, SortOrder, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
@@ -9,8 +10,10 @@ import { redirect } from "next/navigation";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
 import { Result } from ".";
-import connection from "../models";
+import connection, { Populate } from "../models";
 import Review from "../models/Review";
+import { lookup, Release } from "./itunes";
+import { getLikeStatus } from "./likes";
 
 const createReviewSchema = zfd.formData({
   releaseId: zfd.text(),
@@ -105,15 +108,99 @@ export async function createReview(_state: unknown, formData: FormData) {
   }
 }
 
-interface DeleteReviewParams {
-  releaseId: string;
-  revalidate: [string, "page" | "layout"];
+type PopulatedReview = Populate<
+  typeof Review,
+  typeof User,
+  ["author", "profile", "avatar"]
+>;
+
+const sortings = {
+  recent: { createdAt: -1 },
+  trending: { updatedAt: -1 },
+  popular: { likeCount: -1 },
+  controversial: { commentCount: -1 },
+} satisfies Record<string, Partial<Record<keyof PopulatedReview, SortOrder>>>;
+
+export interface GetReviewsParams {
+  sortBy: keyof typeof sortings;
+  limit: number;
+  author?: string;
+}
+
+export interface ReviewProps {
+  hasLiked: boolean;
+  release: Release;
+  review: Omit<PopulatedReview, "_id"> & { _id: string };
+}
+
+export async function getReviews({
+  author,
+  limit,
+  sortBy,
+}: GetReviewsParams): Result<ReviewProps[]> {
+  "use server";
+
+  try {
+    await connection;
+
+    const reviews: Promise<ReviewProps | null>[] = [];
+    const cursor = Review.find<
+      Document<Types.ObjectId, unknown, PopulatedReview>
+    >(
+      author
+        ? { author, isDraft: false }
+        : {
+            isDraft: false,
+          },
+    )
+      .populate("author", "profile.avatar")
+      .sort(sortings[sortBy])
+      .limit(limit + 1);
+
+    for await (const doc of cursor) {
+      //@ts-expect-error `flattenObjectIds` does not affect the return type of `toObject()`
+      const review: Omit<PopulatedReview, "_id"> & { _id: string } =
+        doc.toObject({
+          flattenObjectIds: true,
+        });
+
+      reviews.push(
+        Promise.all([
+          lookup(review.releaseId, {
+            limit: "1",
+            entity: "album",
+          }).then((result) => {
+            if ("error" in result) {
+              throw new Error(result.error);
+            }
+
+            if (result.success.length === 0) {
+              throw new Error("Release not found.");
+            }
+
+            return result.success[0];
+          }),
+          getLikeStatus(review._id)
+            .then((result) => "success" in result && result.success.status)
+            .catch(() => false),
+        ]).then(([release, hasLiked]) => ({ hasLiked, release, review })),
+      );
+    }
+
+    return {
+      success: (await Promise.all(reviews)).filter((review) => review !== null),
+    };
+  } catch (error: unknown) {
+    console.error(error);
+    return { error: "An unknown error occurred." };
+  }
 }
 
 export async function deleteReview(
   _state: unknown,
-  { releaseId, revalidate }: DeleteReviewParams,
-): Result<true> {
+  releaseId: string,
+  revalidateParams: GetReviewsParams,
+) {
   try {
     const session = await cookies()
       .then(User.authorize)
@@ -154,8 +241,7 @@ export async function deleteReview(
       },
     );
 
-    revalidatePath(...revalidate);
-    return { success: true } as const;
+    return await getReviews(revalidateParams);
   } catch (error: unknown) {
     console.error(error);
     return { error: "Failed to delete review." } as const;

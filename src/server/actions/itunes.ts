@@ -1,6 +1,7 @@
 "use server";
 
 import * as z from "zod";
+import { Result } from ".";
 
 const ItunesResults = <T extends z.SomeZodObject>(schema: T) =>
   z.object({
@@ -78,7 +79,7 @@ interface LookupParams {
   limit?: string;
 }
 
-export async function lookup(id: string, params: Omit<LookupParams, "id">) {
+export async function lookup(id: string, params: Omit<LookupParams, "id">): Result<Release[]> {
   const urlSearchParams = new URLSearchParams({
     id: id.split(":")[1],
     ...params,

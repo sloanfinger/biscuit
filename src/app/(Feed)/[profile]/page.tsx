@@ -1,7 +1,6 @@
 import * as Menu from "@/components/Menu";
-import ReviewCard, { PopulatedReview } from "@/components/ReviewCard";
+import Reviews from "@/components/Reviews";
 import connection from "@/server/models";
-import Review from "@/server/models/Review";
 import User from "@/server/models/User";
 import { cookies } from "next/headers";
 import Image from "next/image";
@@ -35,28 +34,6 @@ async function getUser(params: Props["params"]) {
   return user;
 }
 
-async function getRecentReviews(user: Awaited<ReturnType<typeof getUser>>) {
-  return await Review.find({
-    author: user._id,
-    isDraft: false,
-  })
-    .sort({ createdAt: -1 })
-    .limit(6)
-    .then((recentReviews) =>
-      recentReviews.map((doc) => {
-        return {
-          ...doc.toObject(),
-          author: {
-            profile: {
-              avatar: user.profile.avatar,
-            },
-          },
-        } satisfies PopulatedReview;
-      }),
-    )
-    .catch(() => []);
-}
-
 interface Props {
   params: Promise<{ profile: string }>;
 }
@@ -64,7 +41,6 @@ interface Props {
 export default async function ProfilePage({ params }: Props) {
   const nf = new Intl.NumberFormat("en-US");
   const user = await getUser(params);
-  const recentReviews = await getRecentReviews(user);
   const session = await cookies()
     .then(User.authorize)
     .catch(() => null);
@@ -246,13 +222,7 @@ export default async function ProfilePage({ params }: Props) {
             <span className="h-[3px] flex-1 bg-current opacity-50" />
           </h2>
 
-          {recentReviews.map((_, i) => (
-            <ReviewCard
-              entity="album"
-              key={`${recentReviews[i].releaseId}:${recentReviews[i].author.profile.avatar.username}`}
-              review={recentReviews[i]}
-            />
-          ))}
+          <Reviews author={user._id.toHexString()} limit={6} sortBy="recent" />
         </section>
       </main>
     </>
