@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Just needs testing">
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Need to fix page.tsx, then duplicate that with the other profile nav items">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -42,20 +41,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;SaraNavBranch&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/sarab/biscuit&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\sarab\\biscuit\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "SaraNavBranch",
+    "last_opened_file_path": "C:/Users/sarab/biscuit",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "npm.dev.executor": "Run",
+    "ts.external.directory.path": "C:\\Users\\sarab\\biscuit\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="RunManager">
+    <configuration name="dev" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="dev" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="npm.dev" />
+      </list>
+    </recent_temporary>
+  </component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -74,6 +91,7 @@
       <workItem from="1731590932173" duration="7038000" />
       <workItem from="1731690144745" duration="4966000" />
       <workItem from="1732194335135" duration="363000" />
+      <workItem from="1732194836479" duration="901000" />
     </task>
     <task id="LOCAL-00001" summary="Redid original nav, most of these are empty, almost done with review's if the method works.">
       <option name="closed" value="true" />
@@ -107,7 +125,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731697314239</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Need to fix page.tsx, then duplicate that with the other profile nav items">
+      <option name="closed" value="true" />
+      <created>1732195424320</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1732195424320</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -129,7 +155,8 @@
     <MESSAGE value="Redid original nav (my original one that i had mistakenly done trying to make them into components not the actual navbar), most of these are empty, almost done with review's if the method works." />
     <MESSAGE value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
     <MESSAGE value="Almost done with reviews, needs testing to remove some errors" />
-    <option name="LAST_COMMIT_MESSAGE" value="Almost done with reviews, needs testing to remove some errors" />
+    <MESSAGE value="Need to fix page.tsx, then duplicate that with the other profile nav items" />
+    <option name="LAST_COMMIT_MESSAGE" value="Need to fix page.tsx, then duplicate that with the other profile nav items" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -137,6 +164,12 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/src/server/models/Review.ts</url>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx</url>
+          <line>9</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

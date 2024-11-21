@@ -1,5 +1,5 @@
 import {getUserReviews} from "@/server/actions/reviews";
-import ReviewCard, {ReviewDoc} from '@/components/ReviewCard'
+//import ReviewCard, {ReviewDoc} from '@/components/ReviewCard'
 import {cookies} from "next/headers";
 import User from "@/server/models/User";
 import {redirect} from "next/navigation"
@@ -45,8 +45,8 @@ function displayReviews({reviews, error}: Props) {
                 : "No Reviews Found. Please try again later."}
             </h1>
             {reviews.length > 0 ? (
-                reviews.map((review: ReviewDoc) => (
-                    <ReviewCard review={review} entity={"album"} />
+                //reviews.map((review: ReviewDoc) => (
+                //    <ReviewCard review={review} entity={"album"} />
                 ))
             ) : (
                 <p>No Reviews Found</p>
