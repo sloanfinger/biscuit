@@ -16,13 +16,13 @@ export default function ReviewsPage () {
     //const [error, setError] = useState(null);
     //useEffect(() => {
             const getReviews = async () => {
-                //setLoading(true);
-                //setError(null);
                 try {
+                  //Will be done twice
                     const user = await cookies()
                         .then(User.authorize)
                         .catch(() => redirect("/login"));
-                    const userReviews = await getUserReviews(user.id);
+                    console.log(user); //DELETE LATER
+                    const userReviews = await getUserReviews();
                     const docReviews = userReviews as unknown as ReviewDoc[];
                     displayReviews({reviews: docReviews, error: null});
                     } catch (e) {
@@ -31,10 +31,10 @@ export default function ReviewsPage () {
                     //redirect("/login"); //change to another place later, other strings are giving me errors
                 };
             }
-            const reviews = getReviews();
+        const reviews = getReviews();
         }
-    //);
 //}
+
 
 function displayReviews({reviews, error}: Props) {
     return (
