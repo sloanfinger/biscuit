@@ -80,7 +80,8 @@ export async function createAccount(
       });
 
     if (await user.verify()) {
-      return { success: "Account created successfully." };
+      const session = await user.setToken(cookies());
+      redirect(`/@${session.avatar.username}`);
     }
 
     return {
@@ -88,6 +89,10 @@ export async function createAccount(
         "To finish creating your account, check your email for a verification link.",
     };
   } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+
     return { error: (error as Error).message };
   }
 }
@@ -102,16 +107,19 @@ export async function signIn(
   formData: FormData,
 ): Result<never> {
   try {
-    const result = await signInSchema
-      .parseAsync(formData)
-      .then(User.authenticate);
+    const { email, ...credentials } = await signInSchema.parseAsync(formData);
 
-    if (result === null) {
-      return { error: "Please verify your email. A new link has been sent." };
+    const user = await User.findOne({ "settings.email": email });
+
+    if (user === null) {
+      throw new Error(`User with email ${email} does not exist in database.`);
     }
 
-    (await cookies()).set(...result.cookie);
-    redirect(`/@${result.session.avatar.username}`);
+    const session = await user
+      .authenticate(credentials)
+      .then(() => user.setToken(cookies()));
+
+    redirect(`/@${session.avatar.username}`);
   } catch (error: unknown) {
     if (isRedirectError(error)) {
       throw error;
