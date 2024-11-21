@@ -1,5 +1,6 @@
 import {getUserReviews} from "@/server/actions/reviews";
-import ReviewCard, {ReviewDoc} from '@/components/Reviews/ReviewCard'
+import ReviewDoc from '@/components/Reviews/index';
+import ReviewCard from '@/components/Reviews/ReviewCollection';
 import {cookies} from "next/headers";
 import User from "@/server/models/User";
 import {redirect} from "next/navigation"

@@ -2,18 +2,15 @@
 
 import User from "@/server/models/User";
 import { ObjectId } from "mongodb";
-import type { Document, SortOrder, Types } from "mongoose";
 import { revalidatePath } from "next/cache";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import * as z from "zod";
 import * as zfd from "zod-form-data";
-import { Result } from ".";
-import connection, { Populate } from "../models";
+import connection from "../models";
 import Review from "../models/Review";
-import { lookup, Release } from "./itunes";
-import { getLikeStatus } from "./likes";
+
 
 const createReviewSchema = zfd.formData({
   releaseId: zfd.text(),
@@ -38,12 +35,12 @@ export async function createReview(_state: unknown, formData: FormData) {
         throw new Error("Invalid form data.");
       });
 
-    const author = ObjectId.createFromHexString(session.id);
+    const ownerId = ObjectId.createFromHexString(session.id);
     await connection;
 
     const updateResult = await Review.findOneAndUpdate(
       {
-        author,
+        owner: ownerId,
         releaseId: data.releaseId,
       },
       {
@@ -59,13 +56,12 @@ export async function createReview(_state: unknown, formData: FormData) {
     });
 
     if (updateResult !== null) {
-      revalidatePath(`/@${session.avatar.username}`, "page");
       redirect(`/@${session.avatar.username}`);
     }
 
     const [_, otherExists] = await Promise.all([
       await new Review({
-        author,
+        owner: ownerId,
         isDraft: !data.shouldPublish,
         releaseId: data.releaseId,
         artistId: data.artistId,
@@ -75,7 +71,7 @@ export async function createReview(_state: unknown, formData: FormData) {
         commentCount: 0,
       }).save(),
       Review.exists({
-        author,
+        ownerId,
         artistId: data.artistId,
         releaseId: { $not: { $eq: data.releaseId } },
       }).then((result) => result !== null),
@@ -84,8 +80,8 @@ export async function createReview(_state: unknown, formData: FormData) {
       throw new Error("An unexpected error occurred.");
     });
 
-    await User.findOneAndUpdate(
-      { _id: author },
+    await Review.findOneAndUpdate(
+      { _id: ownerId },
       {
         $inc: {
           "profile.stats.releases": 1,
@@ -108,98 +104,14 @@ export async function createReview(_state: unknown, formData: FormData) {
   }
 }
 
-type PopulatedReview = Populate<
-  typeof Review,
-  typeof User,
-  ["author", "profile", "avatar"]
->;
-
-const sortings = {
-  recent: { createdAt: -1 },
-  trending: { updatedAt: -1 },
-  popular: { likeCount: -1 },
-  controversial: { commentCount: -1 },
-} satisfies Record<string, Partial<Record<keyof PopulatedReview, SortOrder>>>;
-
-export interface GetReviewsParams {
-  sortBy: keyof typeof sortings;
-  limit: number;
-  author?: string;
-}
-
-export interface ReviewProps {
-  hasLiked: boolean;
-  release: Release;
-  review: Omit<PopulatedReview, "_id"> & { _id: string };
-}
-
-export async function getReviews({
-                                   author,
-                                   limit,
-                                   sortBy,
-                                 }: GetReviewsParams): Result<ReviewProps[]> {
-  "use server";
-
-  try {
-    await connection;
-
-    const reviews: Promise<ReviewProps | null>[] = [];
-    const cursor = Review.find<
-      Document<Types.ObjectId, unknown, PopulatedReview>
-    >(
-      author
-        ? { author, isDraft: false }
-        : {
-          isDraft: false,
-        },
-    )
-      .populate("author", "profile.avatar")
-      .sort(sortings[sortBy])
-      .limit(limit + 1);
-
-    for await (const doc of cursor) {
-      //@ts-expect-error `flattenObjectIds` does not affect the return type of `toObject()`
-      const review: Omit<PopulatedReview, "_id"> & { _id: string } =
-        doc.toObject({
-          flattenObjectIds: true,
-        });
-
-      reviews.push(
-        Promise.all([
-          lookup(review.releaseId, {
-            limit: "1",
-            entity: "album",
-          }).then((result) => {
-            if ("error" in result) {
-              throw new Error(result.error);
-            }
-
-            if (result.success.length === 0) {
-              throw new Error("Release not found.");
-            }
-
-            return result.success[0];
-          }),
-          getLikeStatus(review._id)
-            .then((result) => "success" in result && result.success.status)
-            .catch(() => false),
-        ]).then(([release, hasLiked]) => ({ hasLiked, release, review })),
-      );
-    }
-
-    return {
-      success: (await Promise.all(reviews)).filter((review) => review !== null),
-    };
-  } catch (error: unknown) {
-    console.error(error);
-    return { error: "An unknown error occurred." };
-  }
+interface DeleteReviewParams {
+  releaseId: string;
+  revalidate: string;
 }
 
 export async function deleteReview(
   _state: unknown,
-  releaseId: string,
-  revalidateParams: GetReviewsParams,
+  { releaseId, revalidate }: DeleteReviewParams,
 ) {
   try {
     const session = await cookies()
@@ -208,20 +120,21 @@ export async function deleteReview(
         throw new Error("Not signed in.");
       });
 
-    const author = ObjectId.createFromHexString(session.id);
+    const ownerId = ObjectId.createFromHexString(session.id);
     await connection;
 
     const deleted = await Review.findOneAndDelete({
-      author,
+      owner: ownerId,
       releaseId,
     });
 
     if (deleted === null) {
-      throw new Error("Review does not exist.");
+      console.error("Review does not exist.");
+      return { success: false } as const;
     }
 
     const otherExists = await Review.exists({
-      author,
+      owner: ownerId,
       artistId: deleted.artistId,
       releaseId: { $not: { $eq: releaseId } },
     })
@@ -232,7 +145,7 @@ export async function deleteReview(
       });
 
     await User.updateOne(
-      { _id: author },
+      { _id: ownerId },
       {
         $inc: {
           "profile.stats.releases": -1,
@@ -241,13 +154,13 @@ export async function deleteReview(
       },
     );
 
-    return await getReviews(revalidateParams);
+    revalidatePath(revalidate);
+    return { success: true } as const;
   } catch (error: unknown) {
     console.error(error);
     return { error: "Failed to delete review." } as const;
   }
 }
-
 
 //New Code
 //Param: id string from User schema

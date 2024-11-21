@@ -43,7 +43,7 @@ interface ReviewCardProps extends ReviewProps {
   session: Token | null;
 }
 
-function ReviewCard({
+export function ReviewCard({
   review,
   release,
   hasLiked,
