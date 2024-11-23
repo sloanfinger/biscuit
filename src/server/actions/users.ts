@@ -232,15 +232,15 @@ export async function updateAccount(_state: unknown, formData: FormData) {
 
     //If no image is provided for either the banner or
     // the avatar, it will use the defaults.
-    if (data.bannerImageURL === undefined) {
+    if (!data.bannerImageURL) {
       data.bannerImageURL = "https://picsum.photos/seed/3/1280/720";
     }
 
-    if (data.avatarImageURL === undefined) {
+    if (!data.avatarImageURL) {
       data.avatarImageURL = "https://picsum.photos/128/128";
     }
 
-    //If no bio is removed, sets the input data to an empty string.
+    //If the bio is removed, sets the input data to an empty string.
     if (!data.bio) {
       data.bio = "";
     }
