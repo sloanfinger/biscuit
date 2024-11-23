@@ -53,7 +53,7 @@ export default async function ProfilePage({ params }: Props) {
           className="absolute top-0 -z-10 size-full object-cover"
           height={720}
           width={1280}
-          src="https://picsum.photos/seed/3/1280/720"
+          src={user.profile.profileBanner || "https://picsum.photos/seed/3/1280/720"}
         />
 
         <div className="absolute inset-0 -z-10 size-full bg-gradient-to-b from-zinc-950/60 to-zinc-950" />
@@ -65,7 +65,7 @@ export default async function ProfilePage({ params }: Props) {
               className="absolute top-0 size-full object-cover"
               height={128}
               width={128}
-              src="https://picsum.photos/128/128"
+              src={user.profile.avatar.image || "https://picsum.photos/128/128"}
             />
           </figure>
 
@@ -77,9 +77,7 @@ export default async function ProfilePage({ params }: Props) {
               <PiMapPinFill /> Athens, GA
             </p>
             <p className="text-sm italic leading-tight text-zinc-400">
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Error
-              maxime saepe, harum culpa minus est praesentium excepturi vero
-              ullam.
+              {user.profile.bio}
             </p>
           </div>
 
