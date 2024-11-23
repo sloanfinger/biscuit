@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Merge remote-tracking branch 'origin/SaraNavBranch' into SaraNavBranch">
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Redid page.tsx with the proper parameters for getReviews">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/server/actions/reviews.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/actions/reviews.ts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +150,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732223840926</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Redid page.tsx with the proper parameters for getReviews">
+      <option name="closed" value="true" />
+      <created>1732321950697</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1732321950697</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -177,7 +184,8 @@
     <MESSAGE value="Need to fix page.tsx, then duplicate that with the other profile nav items, deleted env to make sure it won't overwrite others'" />
     <MESSAGE value="Merged fixed the missing items, should be ready to merge" />
     <MESSAGE value="Merge remote-tracking branch 'origin/SaraNavBranch' into SaraNavBranch" />
-    <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/SaraNavBranch' into SaraNavBranch" />
+    <MESSAGE value="Redid page.tsx with the proper parameters for getReviews" />
+    <option name="LAST_COMMIT_MESSAGE" value="Redid page.tsx with the proper parameters for getReviews" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

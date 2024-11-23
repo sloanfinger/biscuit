@@ -13,7 +13,7 @@ import { undefined } from "zod";
 import user from "@/server/models/User";
 
 
-export default function ReviewsPage () {
+export default async function ReviewsPage () {
             const getUserReviews = async () => {
               try {
                 //Will be done twice
@@ -28,10 +28,11 @@ export default function ReviewsPage () {
               } catch (e) {
                 console.log(e);
                 throw new Error("An unexpected error has occurred.");
-                //redirect("/login"); //change to another place later, other strings are giving me errors
               }
             };
+            await getUserReviews();
         }
+
 //}
 
 /*
