@@ -121,6 +121,11 @@ const sortings = {
   controversial: { commentCount: -1 },
 } satisfies Record<string, Partial<Record<keyof PopulatedReview, SortOrder>>>;
 
+/* Had to copy and paste them in since I accidentally must've deleted it from
+* my branch at some point while my cursor was bugging while selecting my function below,
+* but Sloan made them (not sure if vsc says the creator
+* beside it like webstorm does) - Sara
+*/
 export interface GetReviewsParams {
   sortBy: keyof typeof sortings;
   limit: number;
