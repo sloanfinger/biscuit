@@ -1,6 +1,9 @@
 import { env } from "@/env";
 import { InferIdType } from "mongodb";
-import mongoose, { Model, model, type Types } from "mongoose";
+import mongoose, {
+  type Types
+} from "mongoose";
+import equal from "fast-deep-equal";
 
 function connect() {
   const promise = mongoose
@@ -28,16 +31,22 @@ const connection: Promise<typeof mongoose> =
 
 export default connection;
 
-//@ts-expect-error The Next.js dev server doesn't play nice with Mongoose's model caching
-export const compileOnce: typeof model = (
-  ...[name, ...params]: Parameters<typeof model>
-) => {
-  return name in mongoose.models
-    ? mongoose.models[name]
-    : model(name, ...params);
-};
+export function model<Schema extends mongoose.Schema>(key: string, createSchema: () => Schema) {
+  const schema = createSchema();
+  const compile = () => mongoose.model(key, schema);
 
-export type InferSchema<T> = T extends Model<infer S> ? S : never;
+  if (key in mongoose.models) {
+    if (equal(schema, mongoose.models[key].schema)) {
+      return mongoose.models[key] as ReturnType<typeof compile>;
+    }
+
+    mongoose.deleteModel(key);
+  }
+  
+  return compile();
+}
+
+export type InferSchema<T> = T extends mongoose.Model<infer S> ? S : never;
 
 type Filter<Obj, Predicate> = {
   [K in keyof Obj]: Obj[K] extends Predicate ? K : never;

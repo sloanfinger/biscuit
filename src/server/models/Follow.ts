@@ -1,18 +1,16 @@
 import { Schema } from "mongoose";
-import { compileOnce } from ".";
+import { model } from ".";
 import User from "./User";
 
-const FollowSchema = new Schema(
-  {
-    actor: { type: Schema.Types.ObjectId, ref: User, required: true },
-    user: { type: Schema.Types.ObjectId, ref: User, required: true },
-  },
-  {
-    timestamps: true,
-  },
+const Follow = model("Follow", () =>
+  new Schema(
+    {
+      actor: { type: Schema.Types.ObjectId, ref: User, required: true },
+      user: { type: Schema.Types.ObjectId, ref: User, required: true },
+    },
+    {
+      timestamps: true,
+    },
+  ).index({ actor: 1, review: 1 }, { unique: true }),
 );
-
-FollowSchema.index({ actor: 1, review: 1 }, { unique: true });
-
-const Follow = compileOnce("Follow", FollowSchema);
 export default Follow;

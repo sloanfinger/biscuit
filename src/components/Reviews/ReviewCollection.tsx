@@ -38,7 +38,7 @@ function Rating({ amount }: { amount: number }) {
   return stars;
 }
 
-interface ReviewCardProps extends ReviewProps {
+export interface ReviewCardProps extends ReviewProps {
   onDelete: (releaseId: string) => void;
   session: Token | null;
 }

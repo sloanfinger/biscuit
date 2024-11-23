@@ -1,0 +1,56 @@
+import React from 'react';
+import Image from 'next/image';
+import Link from  'next/link';
+import {ReviewProps} from "@/server/actions/reviews";
+
+export interface AlbumCollectionProps {
+    reviews: ReviewProps[];
+}
+
+export interface releaseCollectionProp {
+    releases: releaseProp[];
+}
+
+export interface releaseProp {
+    //release: {
+        wrapperType: string,
+        collectionExplicitness: string,
+        artistId: string,
+        collectionId: string,
+        collectionName: string,
+        collectionCensoredName: string,
+        artistName: string,
+        artworkUrl100: string,
+        collectionType: string,
+        primaryGenreName: string,
+        releaseDate: string,
+        trackCount: number,
+    //}
+}
+export function AlbumCards({releases}: releaseCollectionProp) {
+    return (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4">
+            {releases.map((release: releaseProp) => (
+                <div key={release.collectionId} className={"flex flex-col items-center rounded-lg bg-zinc-800 p-4 shadow-md"}>
+                    <span className="relative aspect-square w-full overflow-hidden rounded-lg">
+                        {release.artworkUrl100 && (
+                            <Image
+                                alt={release.collectionName}
+                                className={"absolute inset-0 w-full h-full object-cover"}
+                                src={release.artworkUrl100.replace("100x100", "256x256")}
+                                height={256}
+                                width={256}
+                                />
+                        )}
+                    </span>
+                    <div className="mt-2 text-center">
+                        <Link href={`/releases/${release.collectionName}`} className={"text-lg font-semibold hover:underline"}>
+                            {release.collectionName}
+                        </Link>
+                        <p className="mt-1 text-sm text-gray-500">{release.artistName}</p>
+                    </div>
+                </div>
+            ))}
+        </div>
+    )
+}

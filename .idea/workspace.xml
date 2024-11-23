@@ -4,8 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Redid page.tsx with the proper parameters for getReviews">
+    <list default="true" id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="Reviews should work, but full functionality has not been added yet, I plan on either displaying 10 at a time (with a next page button) or a scrolling feature with all of them, or at least 20 at a time">
+      <change afterPath="$PROJECT_DIR$/src/components/AlbumCollection.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/albums/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/albums/page.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -13,7 +15,19 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Sara Free &lt;145237030+saraf020@users.noreply.github.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$" value="main" />
@@ -21,40 +35,21 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory">{
-  &quot;lastFilter&quot;: {
-    &quot;state&quot;: &quot;OPEN&quot;,
-    &quot;assignee&quot;: &quot;saraf020&quot;
-  }
-}</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/sloanfinger/biscuit.git&quot;,
     &quot;accountId&quot;: &quot;e9a00498-7cdb-41a3-8f58-57a100c85ca8&quot;
   }
 }</component>
-  <component name="ProjectColorInfo">{
-  &quot;associatedIndex&quot;: 0
-}</component>
-  <component name="ProjectId" id="2oqIxwZvdYrn6d238p1b7jvyMlR" />
-  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/app/(Feed)/[profile]/reviews/page.tsx" root0="FORCE_HIGHLIGHTING" />
   </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;SaraNavBranch&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/sarab/biscuit&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;npm.dev.executor&quot;: &quot;Run&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\sarab\\biscuit\\node_modules\\typescript\\lib&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+    &quot;ts.external.directory.path&quot;: &quot;C:\\Users\\sarab\\biscuit\\node_modules\\typescript\\lib&quot;
   }
 }</component>
   <component name="RunManager">
@@ -74,95 +69,17 @@
       </list>
     </recent_temporary>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-WS-242.23726.96" />
-      </set>
-    </attachedChunks>
-  </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="Default task">
-      <changelist id="b07fc45c-c492-4c3d-88e4-3bc95407f307" name="Changes" comment="" />
-      <created>1731590930027</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1731590930027</updated>
-      <workItem from="1731590932173" duration="7038000" />
-      <workItem from="1731690144745" duration="4966000" />
-      <workItem from="1732194335135" duration="363000" />
-      <workItem from="1732194836479" duration="1718000" />
-    </task>
-    <task id="LOCAL-00001" summary="Redid original nav, most of these are empty, almost done with review's if the method works.">
+    <task id="LOCAL-00001" summary="Reviews should work, but full functionality has not been added yet, I plan on either displaying 10 at a time (with a next page button) or a scrolling feature with all of them, or at least 20 at a time">
       <option name="closed" value="true" />
-      <created>1731649805577</created>
+      <created>1732406278981</created>
       <option name="number" value="00001" />
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
-      <updated>1731649805577</updated>
+      <updated>1732406278981</updated>
     </task>
-    <task id="LOCAL-00002" summary="Redid original nav (my original one that i had mistakenly done trying to make them into components not the actual navbar), most of these are empty, almost done with review's if the method works.">
-      <option name="closed" value="true" />
-      <created>1731649919434</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1731649919434</updated>
-    </task>
-    <task id="LOCAL-00003" summary="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others">
-      <option name="closed" value="true" />
-      <created>1731653284607</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1731653284607</updated>
-    </task>
-    <task id="LOCAL-00004" summary="Almost done with reviews, needs testing to remove some errors">
-      <option name="closed" value="true" />
-      <created>1731697314239</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1731697314239</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Need to fix page.tsx, then duplicate that with the other profile nav items">
-      <option name="closed" value="true" />
-      <created>1732195424320</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1732195424320</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Need to fix page.tsx, then duplicate that with the other profile nav items, deleted env to make sure it won't overwrite others'">
-      <option name="closed" value="true" />
-      <created>1732196021184</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1732196021184</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Merge remote-tracking branch 'origin/SaraNavBranch' into SaraNavBranch">
-      <option name="closed" value="true" />
-      <created>1732223840926</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1732223840926</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Redid page.tsx with the proper parameters for getReviews">
-      <option name="closed" value="true" />
-      <created>1732321950697</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1732321950697</updated>
-    </task>
-    <option name="localTasksCounter" value="9" />
+    <option name="localTasksCounter" value="2" />
     <servers />
-  </component>
-  <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="3" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -176,25 +93,9 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Redid original nav, most of these are empty, almost done with review's if the method works." />
-    <MESSAGE value="Redid original nav (my original one that i had mistakenly done trying to make them into components not the actual navbar), most of these are empty, almost done with review's if the method works." />
-    <MESSAGE value="Typo on getUserReviews function fixed, working on Reviews page displaying. Mostly done, just needs testing and reconfiguring. Then will use that as a template for the others" />
-    <MESSAGE value="Almost done with reviews, needs testing to remove some errors" />
-    <MESSAGE value="Need to fix page.tsx, then duplicate that with the other profile nav items" />
-    <MESSAGE value="Need to fix page.tsx, then duplicate that with the other profile nav items, deleted env to make sure it won't overwrite others'" />
-    <MESSAGE value="Merged fixed the missing items, should be ready to merge" />
-    <MESSAGE value="Merge remote-tracking branch 'origin/SaraNavBranch' into SaraNavBranch" />
-    <MESSAGE value="Redid page.tsx with the proper parameters for getReviews" />
-    <option name="LAST_COMMIT_MESSAGE" value="Redid page.tsx with the proper parameters for getReviews" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/src/server/models/Review.ts</url>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="RAHHHHHHHHHHH the initial reviews page. I redid it again and went back to using getReviews rather than trying to do Reviews. After doing the other nav tabs, i will come back and add a scroller or pages (shows only 10 at a time maybe, next page button)" />
+    <MESSAGE value="Merge branch 'main' into SaraNavBranch" />
+    <MESSAGE value="Reviews should work, but full functionality has not been added yet, I plan on either displaying 10 at a time (with a next page button) or a scrolling feature with all of them, or at least 20 at a time" />
+    <option name="LAST_COMMIT_MESSAGE" value="Reviews should work, but full functionality has not been added yet, I plan on either displaying 10 at a time (with a next page button) or a scrolling feature with all of them, or at least 20 at a time" />
   </component>
 </project>
