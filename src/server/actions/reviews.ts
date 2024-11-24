@@ -256,7 +256,7 @@ export async function deleteReview(
 
 //New Code
 //Param: id string from User schema
-export async function getUserReviews() {
+export async function getArtistUnique() {
   try {
     const session = await cookies()
         .then(User.authorize)
@@ -267,6 +267,7 @@ export async function getUserReviews() {
     await connection;
     //includes all User data with populate
     const reviews = await Review.find({owner: ownerId});
+    //reviews.find
     return reviews;
   } catch(error) {
     console.error(error);

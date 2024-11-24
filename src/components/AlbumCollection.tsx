@@ -35,15 +35,15 @@ export function AlbumCards({params, session, releases}: releaseCollectionProp) {
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4">
             {releases.map((release: releaseProp) => (
-                <div key={release.collectionId} className={"flex flex-col items-center rounded-lg bg-zinc-800 p-4 shadow-md"}>
+                <div key={release.collectionId} className={"flex flex-col items-center rounded-lg bg-zinc-800 p-4 shadow-md w-3/4"}>
                     <span className="relative aspect-square w-full overflow-hidden rounded-lg">
                         {release.artworkUrl100 && (
                             <Image
                                 alt={release.collectionName}
                                 className={"absolute inset-0 w-full h-full object-cover"}
-                                src={release.artworkUrl100.replace("100x100", "256x256")}
-                                height={256}
-                                width={256}
+                                src={release.artworkUrl100.replace("100x100", "128x128")}
+                                height={128}
+                                width={128}
                                 />
                         )}
                     </span>
@@ -57,8 +57,4 @@ export function AlbumCards({params, session, releases}: releaseCollectionProp) {
             ))}
         </div>
     )
-}
-
-export function AlbumCollection() {
-
 }

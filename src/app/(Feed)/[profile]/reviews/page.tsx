@@ -37,8 +37,6 @@ export default async function ReviewsPage () {
         }
     };
     const reviews100 = await getUserReviews();
-    console.log("reviews100", reviews100);
-    console.log(user);
     return (
         <ReviewCollection params={{sortBy: "recent", limit: 100, author: user.id}} reviews={reviews100} session={user}/>
     );

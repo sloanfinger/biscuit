@@ -1,17 +1,11 @@
-import Profile from '../../Profile'
 import React from 'react'
 import {Outcome} from '@/app/(Feed)/[profile]/reviews/page';
 import {cookies} from "next/headers";
 import User from "@/server/models/User";
 import {redirect} from "next/navigation";
 import {getReviews, ReviewProps} from "@/server/actions/reviews";
-import ReviewCollection from "@/components/Reviews/ReviewCollection";
-import AlbumCollection, {AlbumCards} from "@/components/AlbumCollection";
-import {AlbumCollectionProps} from "@/components/AlbumCollection";
+import {AlbumCards} from "@/components/AlbumCollection";
 
-interface AlbumProps {
-    reviews: ReviewProps[];
-}
 
 export default async function Albums() {
     const user = await cookies()
@@ -34,8 +28,6 @@ export default async function Albums() {
     const releases = reviews100.map((review: ReviewProps) => {
         return review.release
     });
-    console.log(releases);
-    console.log(user);
     return (
         <AlbumCards params={{sortBy: "recent", limit: 100, author: user.id}} releases={releases} session={user}/>
     );
