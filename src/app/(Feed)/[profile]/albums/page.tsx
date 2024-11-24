@@ -6,6 +6,8 @@ import User from "@/server/models/User";
 import {redirect} from "next/navigation";
 import {getReviews, ReviewProps} from "@/server/actions/reviews";
 import ReviewCollection from "@/components/Reviews/ReviewCollection";
+import AlbumCollection, {AlbumCards} from "@/components/AlbumCollection";
+import {AlbumCollectionProps} from "@/components/AlbumCollection";
 
 interface AlbumProps {
     reviews: ReviewProps[];
@@ -17,11 +19,11 @@ export default async function Albums() {
         .catch(() => redirect("/login"));
     const getUserAlbums = async () => {
         try {
-            const userReviews: Outcome<ReviewProps[]> = await getReviews({ limit: 100, sortBy: "recent", author: user.id });
-            if (!userReviews) {
+            const userAlbums: Outcome<ReviewProps[]> = await getReviews({ limit: 100, sortBy: "recent", author: user.id });
+            if (!userAlbums) {
                 return <div>This user currently has no reviews posted.</div>
             }
-            if (userReviews.success) return userReviews.success;
+            if (userAlbums.success) return userAlbums.success;
             else return [];
         } catch (e) {
             console.log(e);
@@ -29,14 +31,13 @@ export default async function Albums() {
         }
     };
     const reviews100 = await getUserAlbums();
-    console.log("reviews100", reviews100);
+    const releases = reviews100.map((review: ReviewProps) => {
+        return review.release
+    });
+    console.log(releases);
     console.log(user);
     return (
-        <ReviewCollection params={{sortBy: "recent", limit: 100, author: user.id}} reviews={reviews100} session={user}/>
+        <AlbumCards params={{sortBy: "recent", limit: 100, author: user.id}} releases={releases} session={user}/>
     );
-
-}
-
-function AlbumCollection(AlbumProps) {
 
 }

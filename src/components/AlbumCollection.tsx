@@ -1,7 +1,9 @@
+'use client';
 import React from 'react';
 import Image from 'next/image';
 import Link from  'next/link';
-import {ReviewProps} from "@/server/actions/reviews";
+import {GetReviewsParams, ReviewProps} from "@/server/actions/reviews";
+import { Token } from "@/server/models/User";
 
 export interface AlbumCollectionProps {
     reviews: ReviewProps[];
@@ -9,6 +11,8 @@ export interface AlbumCollectionProps {
 
 export interface releaseCollectionProp {
     releases: releaseProp[];
+    params: GetReviewsParams;
+    session: Token | null;
 }
 
 export interface releaseProp {
@@ -27,7 +31,7 @@ export interface releaseProp {
         trackCount: number,
     //}
 }
-export function AlbumCards({releases}: releaseCollectionProp) {
+export function AlbumCards({params, session, releases}: releaseCollectionProp) {
     return (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4">
             {releases.map((release: releaseProp) => (
@@ -53,4 +57,8 @@ export function AlbumCards({releases}: releaseCollectionProp) {
             ))}
         </div>
     )
+}
+
+export function AlbumCollection() {
+
 }
