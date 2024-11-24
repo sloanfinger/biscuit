@@ -32,8 +32,8 @@ const Page = () => {
                             name={playlist.name}
                             onDelete={() => removePlaylist(playlist.name)}
                         />
-                        </div>
-                    ))}
+                    </div>
+                ))}
             </div>
         </div>
     );

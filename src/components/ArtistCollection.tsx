@@ -32,7 +32,7 @@ export default async function ArtistCollection(props: ArtistCollectionProps) {
     return(
         <div className={"p-6"}>
             <h2 className={"text-2xl text-center font-bold text-lg mb-8"}>Artists</h2>
-            <div className={"grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4 shadow-lg rounded-lg bg-white"}>
+            <div className={"grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 p-4 shadow-lg rounded-lg bg-grey"}>
                 {artistSummary.map((artist) => (
                 <ArtistCard artistName={artist.artistName} collectionNames={artist.collectionNames}/>
                 ))}
