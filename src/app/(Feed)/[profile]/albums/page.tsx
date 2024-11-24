@@ -26,7 +26,7 @@ export default async function Albums() {
     };
     const reviews100 = await getUserAlbums();
     const releases = reviews100.map((review: ReviewProps) => {
-        return review.release
+        return review.release;
     });
     return (
         <AlbumCards params={{sortBy: "recent", limit: 100, author: user.id}} releases={releases} session={user}/>
