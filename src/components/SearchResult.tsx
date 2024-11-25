@@ -10,7 +10,7 @@ interface Props {
 export default function SearchResult({ href, release }: Props) {
   return (
     <Link
-      className="relative flex flex-col gap-4 rounded-md px-3 py-3.5 transition-[box-shadow,background-color] duration-100 hover:bg-zinc-800 h-max hover:shadow-md active:shadow-sm"
+      className="relative flex h-max flex-col gap-4 rounded-md px-3 py-3.5 transition-[box-shadow,background-color] duration-100 hover:bg-zinc-800 hover:shadow-md active:shadow-sm"
       href={href + "/" + release.collectionId}
     >
       <figure className="contents">
@@ -26,10 +26,10 @@ export default function SearchResult({ href, release }: Props) {
           )}
         </span>
         <figcaption className="flex flex-col gap-1">
-          <span className="text-lg font-bold leading-tight line-clamp-2">
+          <span className="line-clamp-2 text-lg font-bold leading-tight">
             {release.collectionName}
           </span>
-          <span className="leading-tight text-zinc-400 line-clamp-2">
+          <span className="line-clamp-2 leading-tight text-zinc-400">
             {release.artistName}
           </span>
         </figcaption>

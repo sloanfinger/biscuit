@@ -1,8 +1,6 @@
 import { env } from "@/env";
 import { InferIdType } from "mongodb";
-import mongoose, {
-  type Types
-} from "mongoose";
+import mongoose, { type Types } from "mongoose";
 import equal from "fast-deep-equal";
 
 function connect() {
@@ -31,7 +29,10 @@ const connection: Promise<typeof mongoose> =
 
 export default connection;
 
-export function model<Schema extends mongoose.Schema>(key: string, createSchema: () => Schema) {
+export function model<Schema extends mongoose.Schema>(
+  key: string,
+  createSchema: () => Schema,
+) {
   const schema = createSchema();
   const compile = () => mongoose.model(key, schema);
 
@@ -42,7 +43,7 @@ export function model<Schema extends mongoose.Schema>(key: string, createSchema:
 
     mongoose.deleteModel(key);
   }
-  
+
   return compile();
 }
 
