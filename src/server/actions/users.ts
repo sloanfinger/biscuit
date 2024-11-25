@@ -9,7 +9,6 @@ import connection from "@/server/models";
 import User from "@/server/models/User";
 import { hash } from "bcrypt";
 import { isRedirectError } from "next/dist/client/components/redirect";
-import { ObjectId } from "mongodb";
 import { compare } from "bcrypt";
 
 export async function validateUsername(username: string): Result<boolean> {
@@ -150,9 +149,17 @@ const updateAccountSchema = zfd.formData({
       .toLowerCase()
       .regex(/^.{3,15}$/),
   ),
-  bio: zfd.text(z.string().optional()),
-  avatarImageURL: zfd.text(z.string().url().optional()),
-  bannerImageURL: zfd.text(z.string().url().optional()),
+  bio: zfd.text(z.string().optional().default("")),
+  avatarImageURL: zfd.text(
+    z.string().url().optional().default("https://picsum.photos/128/128"),
+  ),
+  bannerImageURL: zfd.text(
+    z
+      .string()
+      .url()
+      .optional()
+      .default("https://picsum.photos/seed/3/1280/720"),
+  ),
   email: zfd.text(z.string().email().toLowerCase()),
   password: zfd.text(z.string().min(8).optional()),
   confirmedPassword: zfd.text(z.string().min(8).optional()),
@@ -168,13 +175,11 @@ export async function updateAccount(_state: unknown, formData: FormData) {
         throw new Error("Not signed in.");
       });
 
-      const user = await User.findOne({ _id: new ObjectId(session.id) }).catch(
-        () => null
-      );
+    const user = await User.findById(session.id).catch(() => null);
 
-      if (!user) {
-        throw new Error("User not found.");
-      }
+    if (!user) {
+      throw new Error("User not found.");
+    }
 
     const data = await updateAccountSchema
       .parseAsync(formData)
@@ -182,7 +187,6 @@ export async function updateAccount(_state: unknown, formData: FormData) {
         console.error(error);
         throw new Error("Invalid form data.");
       });
-
 
     // Checks if inputted username is valid, and whether or not it equals the current one.
     //This ensures all users have unique usernames
@@ -222,7 +226,7 @@ export async function updateAccount(_state: unknown, formData: FormData) {
 
       const isOldPasswordCorrect = await compare(
         data.confirmedPassword,
-        user.settings.password
+        user.settings.password,
       );
 
       if (!isOldPasswordCorrect) {
@@ -230,23 +234,8 @@ export async function updateAccount(_state: unknown, formData: FormData) {
       }
     }
 
-    //If no image is provided for either the banner or
-    // the avatar, it will use the defaults.
-    if (!data.bannerImageURL) {
-      data.bannerImageURL = "https://picsum.photos/seed/3/1280/720";
-    }
-
-    if (!data.avatarImageURL) {
-      data.avatarImageURL = "https://picsum.photos/128/128";
-    }
-
-    //If the bio is removed, sets the input data to an empty string.
-    if (!data.bio) {
-      data.bio = "";
-    }
-
     // Use $set to update the user's fields
-    const updateFields: Record<string, any> = {
+    const updateFields: Record<string, string | undefined> = {
       "profile.avatar.username": data.username,
       "profile.avatar.displayName": data.displayName,
       "profile.bio": data.bio,
@@ -254,8 +243,8 @@ export async function updateAccount(_state: unknown, formData: FormData) {
       "profile.avatar.image": data.avatarImageURL,
       "settings.email": data.email,
     };
-    
-    if (hashedPassword) { 
+
+    if (hashedPassword) {
       //If hashedPassword is not undefined (it exists),
       //Add it to the list of things to update about the user.
       updateFields["settings.password"] = hashedPassword;
@@ -264,7 +253,7 @@ export async function updateAccount(_state: unknown, formData: FormData) {
     const updatedUser = await User.findOneAndUpdate(
       { _id: user._id },
       { $set: updateFields },
-      { new: true, runValidators: true }
+      { new: true, runValidators: true },
     ).catch((error: unknown) => {
       console.error(error);
       throw new Error("An unexpected error occurred.");
@@ -273,7 +262,7 @@ export async function updateAccount(_state: unknown, formData: FormData) {
     if (!updatedUser) {
       throw new Error("User update failed.");
     }
-    
+
     // Retrieve the updated user instance to ensure methods like `setToken` work
     const refreshedUser = await User.findById(updatedUser._id);
     if (!refreshedUser) {

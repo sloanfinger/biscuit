@@ -22,7 +22,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "**", 
+        hostname: "**",
         port: "",
         pathname: "/**",
       },

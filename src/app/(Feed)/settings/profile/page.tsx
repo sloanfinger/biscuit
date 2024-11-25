@@ -5,25 +5,19 @@ import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import Editor from "./Editor";
 
-interface Props {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
-export default async function Page({ params }: Props) {
+export default async function Page() {
   const session = await cookies()
     .then(User.authorize)
     .catch(() => redirect("/login"));
 
-    await connection;
+  await connection;
 
   const user = await User.findOne({
-    _id: new ObjectId(session.id), 
+    _id: new ObjectId(session.id),
   }).catch(() => null);
 
   if (!user) {
-    return notFound(); 
+    return notFound();
   }
 
   return (
@@ -33,10 +27,10 @@ export default async function Page({ params }: Props) {
         email: user.settings.email,
         bio: user.profile.bio ?? "",
         avatarImage: user.profile.avatar.image ?? "",
-        bannerImage: user.profile.profileBanner ?? "",
+        bannerImage: user.profile.profileBanner,
         displayName: user.profile.avatar.displayName,
         password: "",
       }}
     />
-  )
+  );
 }
