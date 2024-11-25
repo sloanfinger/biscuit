@@ -79,7 +79,10 @@ interface LookupParams {
   limit?: string;
 }
 
-export async function lookup(id: string, params: Omit<LookupParams, "id">): Result<Release[]> {
+export async function lookup(
+  id: string,
+  params: Omit<LookupParams, "id">,
+): Result<Release[]> {
   const urlSearchParams = new URLSearchParams({
     id: id.split(":")[1],
     ...params,

@@ -9,6 +9,7 @@ import connection from "@/server/models";
 import User from "@/server/models/User";
 import { hash } from "bcrypt";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { compare } from "bcrypt";
 
 export async function validateUsername(username: string): Result<boolean> {
   if (!/^[a-z_]/i.test(username)) {
@@ -133,4 +134,149 @@ export async function signIn(
 export async function signOut() {
   (await cookies()).delete("jwt");
   redirect("/");
+}
+
+const updateAccountSchema = zfd.formData({
+  username: zfd.text(
+    z
+      .string()
+      .toLowerCase()
+      .regex(/^[a-z_][0-9a-z_]{3,15}$/),
+  ),
+  displayName: zfd.text(
+    z
+      .string()
+      .toLowerCase()
+      .regex(/^.{3,15}$/),
+  ),
+  bio: zfd.text(z.string().optional().default("")),
+  avatarImageURL: zfd.text(
+    z.string().url().optional().default("https://picsum.photos/128/128"),
+  ),
+  bannerImageURL: zfd.text(
+    z
+      .string()
+      .url()
+      .optional()
+      .default("https://picsum.photos/seed/3/1280/720"),
+  ),
+  email: zfd.text(z.string().email().toLowerCase()),
+  password: zfd.text(z.string().min(8).optional()),
+  confirmedPassword: zfd.text(z.string().min(8).optional()),
+});
+
+export async function updateAccount(_state: unknown, formData: FormData) {
+  try {
+    await connection;
+
+    const session = await cookies()
+      .then(User.authorize)
+      .catch(() => {
+        throw new Error("Not signed in.");
+      });
+
+    const user = await User.findById(session.id).catch(() => null);
+
+    if (!user) {
+      throw new Error("User not found.");
+    }
+
+    const data = await updateAccountSchema
+      .parseAsync(formData)
+      .catch((error: unknown) => {
+        console.error(error);
+        throw new Error("Invalid form data.");
+      });
+
+    // Checks if inputted username is valid, and whether or not it equals the current one.
+    //This ensures all users have unique usernames
+    if (data.username && data.username !== user.profile.avatar.username) {
+      //If not, it will search for users with that new username, and throw an error if it exists.
+      const existingUserWithUsername = await User.findOne({
+        "profile.avatar.username": data.username,
+      });
+
+      if (existingUserWithUsername) {
+        throw new Error("Username is already in use.");
+      }
+    }
+
+    // Same idea as the statement above, but for emails this time.
+    // This ensures unique emails amongst all the users.
+    if (data.email && data.email !== user.settings.email) {
+      const existingUserWithEmail = await User.findOne({
+        "settings.email": data.email,
+      });
+      if (existingUserWithEmail) {
+        throw new Error("Email is already in use.");
+      }
+    }
+
+    //Hashes new password
+    const hashedPassword = data.password
+      ? await hash(data.password, 10)
+      : undefined;
+
+    //Makes sure that the user correctly provided their old password before
+    //trying to update to a new password.
+    if (data.password) {
+      if (!data.confirmedPassword) {
+        throw new Error("Old password is required to update your password.");
+      }
+
+      const isOldPasswordCorrect = await compare(
+        data.confirmedPassword,
+        user.settings.password,
+      );
+
+      if (!isOldPasswordCorrect) {
+        throw new Error("Old password does not match.");
+      }
+    }
+
+    // Use $set to update the user's fields
+    const updateFields: Record<string, string | undefined> = {
+      "profile.avatar.username": data.username,
+      "profile.avatar.displayName": data.displayName,
+      "profile.bio": data.bio,
+      "profile.profileBanner": data.bannerImageURL,
+      "profile.avatar.image": data.avatarImageURL,
+      "settings.email": data.email,
+    };
+
+    if (hashedPassword) {
+      //If hashedPassword is not undefined (it exists),
+      //Add it to the list of things to update about the user.
+      updateFields["settings.password"] = hashedPassword;
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: user._id },
+      { $set: updateFields },
+      { new: true, runValidators: true },
+    ).catch((error: unknown) => {
+      console.error(error);
+      throw new Error("An unexpected error occurred.");
+    });
+
+    if (!updatedUser) {
+      throw new Error("User update failed.");
+    }
+
+    // Retrieve the updated user instance to ensure methods like `setToken` work
+    const refreshedUser = await User.findById(updatedUser._id);
+    if (!refreshedUser) {
+      throw new Error("Failed to reload updated user.");
+    }
+
+    const updatedSession = await refreshedUser.setToken(cookies());
+
+    redirect(`/@${updatedSession.avatar.username}`);
+  } catch (error) {
+    if (isRedirectError(error)) {
+      throw error;
+    }
+    console.error(error);
+    return { error: (error as Error).message };
+  }
 }

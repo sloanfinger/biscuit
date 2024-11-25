@@ -65,9 +65,9 @@ function ReviewCard({
 
   return (
     <div className="@container">
-      <article className="@md:grid @md:items-center @md:gap-y-3 @[16rem]:px-4 @[16rem]:py-[1.125rem] flex grid-cols-[8rem_auto] grid-rows-[8rem_auto] flex-col gap-[1.125rem] gap-x-6 rounded-md bg-zinc-800 px-2 py-1.5 shadow-sm">
-        <figure className="@md:contents @[16rem]:flex-row flex flex-col items-center gap-4">
-          <span className="@[16rem]:size-20 @md:size-32 relative aspect-square w-full overflow-hidden rounded-sm">
+      <article className="flex grid-cols-[8rem_auto] grid-rows-[8rem_auto] flex-col gap-[1.125rem] gap-x-6 rounded-md bg-zinc-800 px-2 py-1.5 shadow-sm @[16rem]:px-4 @[16rem]:py-[1.125rem] @md:grid @md:items-center @md:gap-y-3">
+        <figure className="flex flex-col items-center gap-4 @[16rem]:flex-row @md:contents">
+          <span className="relative aspect-square w-full overflow-hidden rounded-sm @[16rem]:size-20 @md:size-32">
             {release.artworkUrl100 && (
               <Image
                 alt=""
@@ -78,7 +78,7 @@ function ReviewCard({
               />
             )}
           </span>
-          <figcaption className="@[16rem]:items-start @md:self-start row-start-2 flex flex-col items-center gap-2">
+          <figcaption className="row-start-2 flex flex-col items-center gap-2 @[16rem]:items-start @md:self-start">
             <Link
               className="line-clamp-2 text-xl font-bold leading-tight hover:underline"
               href={`/releases/${review.releaseId}`}
@@ -99,12 +99,12 @@ function ReviewCard({
           href={`/@${review.author.profile.avatar.username}/releases/${review.releaseId}`}
         >
           {review.content ? (
-            <span className="@[16rem]:text-base @[16rem]:pb-0 line-clamp-4 flex-1 justify-center overflow-hidden rounded-r-md border-l-[3px] border-zinc-600 px-3 py-0.5 text-sm text-white transition-colors hover:bg-zinc-700">
+            <span className="line-clamp-4 flex-1 justify-center overflow-hidden rounded-r-md border-l-[3px] border-zinc-600 px-3 py-0.5 text-sm text-white transition-colors hover:bg-zinc-700 @[16rem]:pb-0 @[16rem]:text-base">
               {review.content}
             </span>
           ) : (
             <figure className="flex flex-1 flex-col items-center justify-center gap-1 rounded-sm border-2 border-zinc-600 bg-zinc-900/50 py-3 text-green-500 transition-colors hover:border-green-600 hover:bg-zinc-900">
-              <span className="@[16rem]:text-3xl flex items-center gap-1 text-2xl">
+              <span className="flex items-center gap-1 text-2xl @[16rem]:text-3xl">
                 <Rating amount={review.rating} />
               </span>
               <figcaption className="pb-0.5 text-sm">
@@ -114,7 +114,7 @@ function ReviewCard({
           )}
         </Link>
 
-        <div className="@md:gap-0 @md:min-h-20 @md:justify-around flex h-full flex-col gap-3">
+        <div className="flex h-full flex-col gap-3 @md:min-h-20 @md:justify-around @md:gap-0">
           <div className="flex items-center justify-between">
             <Link
               href={`/@${review.author.profile.avatar.username}`}
@@ -163,8 +163,8 @@ function ReviewCard({
                 </div>
               )}
           </div>
-          <div className="flex items-center flex-col-reverse @[16rem]:flex-row gap-3 @[16rem]:justify-between">
-            <div className="flex @[16rem]:items-start items-center flex-col text-sm">
+          <div className="flex flex-col-reverse items-center gap-3 @[16rem]:flex-row @[16rem]:justify-between">
+            <div className="flex flex-col items-center text-sm @[16rem]:items-start">
               <button
                 className="flex items-center gap-2 rounded-md px-1 text-rose-400 hover:bg-rose-700/25"
                 onClick={() => {
@@ -184,7 +184,7 @@ function ReviewCard({
             </div>
 
             {review.content && (
-              <figure className="flex flex-col items-center @[16rem]:items-end justify-center gap-1 text-green-500">
+              <figure className="flex flex-col items-center justify-center gap-1 text-green-500 @[16rem]:items-end">
                 <span className="flex items-center gap-0.5 text-lg">
                   <Rating amount={review.rating} />
                 </span>
