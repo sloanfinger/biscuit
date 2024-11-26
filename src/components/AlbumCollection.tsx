@@ -16,7 +16,6 @@ export interface releaseCollectionProp {
 }
 
 export interface releaseProp {
-    //release: {
         wrapperType: string,
         collectionExplicitness: string,
         artistId: string,
@@ -29,7 +28,6 @@ export interface releaseProp {
         primaryGenreName: string,
         releaseDate: string,
         trackCount: number,
-    //}
 }
 export function AlbumCards({params, session, releases}: releaseCollectionProp) {
     return (

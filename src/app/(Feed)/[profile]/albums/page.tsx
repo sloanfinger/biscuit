@@ -11,11 +11,12 @@ export default async function Albums() {
     const user = await cookies()
         .then(User.authorize)
         .catch(() => redirect("/login"));
-    const getUserAlbums = async () => {
+    const getUserAlbums = async (): Promise<ReviewProps[]> => {
         try {
             const userAlbums: Outcome<ReviewProps[]> = await getReviews({ limit: 100, sortBy: "recent", author: user.id });
             if (!userAlbums) {
-                return <div>This user currently has no reviews posted.</div>
+                <div>This user currently has no reviews posted.</div>
+                return [];
             }
             if (userAlbums.success) return userAlbums.success;
             else return [];
@@ -26,7 +27,11 @@ export default async function Albums() {
     };
     const reviews100 = await getUserAlbums();
     const releases = reviews100.map((review: ReviewProps) => {
-        return review.release;
+        return {
+            ...review.release,
+            artworkUrl100: review.release.artworkUrl100 || '',
+            primaryGenreName: review.release.primaryGenreName || '',
+        };
     });
     return (
         <AlbumCards params={{sortBy: "recent", limit: 100, author: user.id}} releases={releases} session={user}/>
