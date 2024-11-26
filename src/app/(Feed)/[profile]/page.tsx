@@ -152,26 +152,26 @@ export default async function ProfilePage({ params }: Props) {
                 Profile
               </SubNavItem>
               <SubNavItem
-                path="/reviews"
-                username={user.profile.avatar.username}
+                  path="/reviews"
+                  username={user.profile.avatar.username}
               >
                 Reviews
               </SubNavItem>
               <SubNavItem
-                path="/albums"
-                username={user.profile.avatar.username}
+                  path="/albums"
+                  username={user.profile.avatar.username}
               >
                 Albums
               </SubNavItem>
               <SubNavItem
-                path="/artists"
-                username={user.profile.avatar.username}
+                  path="/artists"
+                  username={user.profile.avatar.username}
               >
                 Artists
               </SubNavItem>
               <SubNavItem
-                path="/playlists"
-                username={user.profile.avatar.username}
+                  path="/playlists"
+                  username={user.profile.avatar.username}
               >
                 Playlists
               </SubNavItem>
@@ -186,44 +186,58 @@ export default async function ProfilePage({ params }: Props) {
         </aside>
 
         {session?.avatar.username === user.profile.avatar.username && (
-          <nav className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 rounded-lg border-2 border-dashed border-green-600 px-6 py-4">
-            <p className="flex-1 text-lg font-bold text-zinc-400">
-              Welcome to your profile.
-            </p>
-            <p className="flex gap-2">
-              <Link
-                className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
-                href="/new"
-              >
-                <PiPencilSimpleLineBold className="text-2xl text-zinc-400 group-hover:text-white" />
-                Log New Music
-              </Link>
-              <Link
-                className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
-                href={`/@${user.profile.avatar.username}/drafts`}
-              >
-                <PiFileDashedBold className="text-2xl text-zinc-400 group-hover:text-white" />
-                Edit Drafts
-              </Link>
-              <Link
-                className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
-                href="/settings/profile"
-              >
-                <PiGearDuotone className="text-2xl text-zinc-400 group-hover:text-white" />
-                Profile Settings
-              </Link>
-            </p>
-          </nav>
+            <nav
+                className="mx-auto flex w-full max-w-5xl flex-col items-center gap-4 rounded-lg border-2 border-dashed border-green-600 px-6 py-4">
+              <p className="flex-1 text-lg font-bold text-zinc-400">
+                Welcome to your profile.
+              </p>
+              <p className="flex gap-2">
+                <Link
+                    className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
+                    href="/new"
+                >
+                  <PiPencilSimpleLineBold className="text-2xl text-zinc-400 group-hover:text-white"/>
+                  Log New Music
+                </Link>
+                <Link
+                    className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
+                    href={`/@${user.profile.avatar.username}/drafts`}
+                >
+                  <PiFileDashedBold className="text-2xl text-zinc-400 group-hover:text-white"/>
+                  Edit Drafts
+                </Link>
+                <Link
+                    className="group flex flex-col items-center gap-1 rounded-md border-2 border-zinc-500 bg-gradient-to-b from-zinc-900 to-zinc-950 px-6 py-3 hover:border-green-500 hover:from-green-900 hover:to-green-950 active:bg-gradient-to-t"
+                    href="/settings/profile"
+                >
+                  <PiGearDuotone className="text-2xl text-zinc-400 group-hover:text-white"/>
+                  Profile Settings
+                </Link>
+              </p>
+            </nav>
         )}
 
-        <section className="mx-auto grid w-full max-w-6xl grid-cols-2 grid-rows-[repeat(2,max-content_1fr_1fr_max-content)] gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
-          <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
-            Recent Reviews
-            <PiRssBold className="-mb-0.5 -ml-0.5" />
-            <span className="h-[3px] flex-1 bg-current opacity-50" />
-          </h2>
+        <section>
+          <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
+            <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
+              Recent Reviews
+              <PiRssBold className="-mb-0.5 -ml-0.5"/>
+              <span className="h-[3px] flex-1 bg-current opacity-50"/>
+            </h2>
 
-          <Reviews author={user._id.toHexString()} limit={6} sortBy="recent" />
+            <Reviews author={user._id.toHexString()} limit={6} sortBy="recent"/>
+          </div>
+        </section>
+        <section>
+          <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
+            <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
+              Popular Reviews
+              <PiRssBold className="-mb-0.5 -ml-0.5"/>
+              <span className="h-[3px] flex-1 bg-current opacity-50"/>
+            </h2>
+
+            <Reviews author={user._id.toHexString()} limit={6} sortBy="popular"/>
+          </div>
         </section>
       </main>
     </>
