@@ -15,7 +15,8 @@ export default async function Artists() {
         try {
             const userAlbums: Outcome<ReviewProps[]> = await getReviews({ limit: 100, sortBy: "recent", author: user.id });
             if (!userAlbums) {
-                return <div>This user currently has no reviews posted.</div>
+                <div>This user currently has no reviews posted.</div>
+                return [];
             }
             if (userAlbums.success) return userAlbums.success;
             else return [];
