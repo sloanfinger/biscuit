@@ -27,7 +27,8 @@ export default async function ReviewsPage () {
         try {
             const userReviews: Outcome<ReviewProps[]> = await getReviews({ limit: 100, sortBy: "recent", author: user.id });
             if (!userReviews) {
-                return <div>This user currently has no reviews posted.</div>
+                <div>This user currently has no reviews posted.</div>
+                return [];
             }
             if (userReviews.success) return userReviews.success;
             else return [];
