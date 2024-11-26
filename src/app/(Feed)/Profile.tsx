@@ -5,6 +5,7 @@ import { Token } from "@/server/models/User";
 import * as Avatar from "@radix-ui/react-avatar";
 import * as Dropdown from "@radix-ui/react-dropdown-menu";
 import Link from "next/link";
+import Image from "next/image";
 import {
   PiDoorOpenBold,
   PiFileDashedBold,
@@ -36,7 +37,11 @@ export default function Profile({ user }: Props) {
     <Dropdown.Root>
       <Dropdown.Trigger>
         <Avatar.Root className="relative block size-11">
-          {/* <Avatar.Image /> */}
+          {user.avatar.image && (
+            <Avatar.Image asChild>
+              <Image alt="" height={64} width={64} src={user.avatar.image} />
+            </Avatar.Image>
+          )}
           <Avatar.Fallback className="block h-full w-full rounded-full border-2 border-green-950 bg-gradient-to-br from-green-700 to-green-900 py-1.5 text-center font-serif text-[1.75rem] leading-none text-white opacity-90">
             {user.avatar.displayName.substring(0, 2).toUpperCase()}
           </Avatar.Fallback>

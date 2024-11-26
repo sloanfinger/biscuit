@@ -99,8 +99,10 @@ function ReviewCard({
           href={`/@${review.author.profile.avatar.username}/releases/${review.releaseId}`}
         >
           {review.content ? (
-            <span className="line-clamp-4 flex-1 justify-center overflow-hidden rounded-r-md border-l-[3px] border-zinc-600 px-3 py-0.5 text-sm text-white transition-colors hover:bg-zinc-700 @[16rem]:pb-0 @[16rem]:text-base">
-              {review.content}
+            <span className="flex-1 flex flex-col justify-center overflow-hidden rounded-r-md border-l-[3px] border-zinc-600 px-3 py-0.5 text-sm text-white transition-colors hover:bg-zinc-700 @[16rem]:pb-0 @[16rem]:text-base">
+              <span className="line-clamp-4">
+                {review.content}
+              </span>
             </span>
           ) : (
             <figure className="flex flex-1 flex-col items-center justify-center gap-1 rounded-sm border-2 border-zinc-600 bg-zinc-900/50 py-3 text-green-500 transition-colors hover:border-green-600 hover:bg-zinc-900">
