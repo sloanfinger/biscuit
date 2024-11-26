@@ -38,12 +38,12 @@ function Rating({ amount }: { amount: number }) {
   return stars;
 }
 
-interface ReviewCardProps extends ReviewProps {
+export interface ReviewCardProps extends ReviewProps {
   onDelete: (releaseId: string) => void;
   session: Token | null;
 }
 
-function ReviewCard({
+export function ReviewCard({
   review,
   release,
   hasLiked,

@@ -121,6 +121,11 @@ const sortings = {
   controversial: { commentCount: -1 },
 } satisfies Record<string, Partial<Record<keyof PopulatedReview, SortOrder>>>;
 
+/* Had to copy and paste them in since I accidentally must've deleted it from
+* my branch at some point while my cursor was bugging while selecting my function below,
+* but Sloan made them (not sure if vsc says the creator
+* beside it like webstorm does) - Sara
+*/
 export interface GetReviewsParams {
   sortBy: keyof typeof sortings;
   limit: number;
@@ -134,10 +139,10 @@ export interface ReviewProps {
 }
 
 export async function getReviews({
-  author,
-  limit,
-  sortBy,
-}: GetReviewsParams): Result<ReviewProps[]> {
+                                   author,
+                                   limit,
+                                   sortBy,
+                                 }: GetReviewsParams): Result<ReviewProps[]> {
   "use server";
 
   try {
@@ -150,8 +155,8 @@ export async function getReviews({
       author
         ? { author, isDraft: false }
         : {
-            isDraft: false,
-          },
+          isDraft: false,
+        },
     )
       .populate("author", "profile.avatar")
       .sort(sortings[sortBy])
@@ -245,5 +250,27 @@ export async function deleteReview(
   } catch (error: unknown) {
     console.error(error);
     return { error: "Failed to delete review." } as const;
+  }
+}
+
+
+//New Code
+//Param: id string from User schema
+export async function getArtistUnique() {
+  try {
+    const session = await cookies()
+        .then(User.authorize)
+        .catch(() => {
+          throw new Error("Not signed in.");
+        });
+    const ownerId = ObjectId.createFromHexString(session.id);
+    await connection;
+    //includes all User data with populate
+    const reviews = await Review.find({owner: ownerId});
+    //reviews.find
+    return reviews;
+  } catch(error) {
+    console.error(error);
+    throw new Error("An unexpected error occurred.");
   }
 }
