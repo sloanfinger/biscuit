@@ -35,10 +35,10 @@ export default function New() {
     <>
       <h2 className="md:text-base lg:text-3xl font-bold text-white">Create Album Review</h2>
 
-      <fieldset className="items-cente flex w-full gap-3">
-        <label className="relative block w-full flex-1 space-y-1.5">
+      <fieldset className="flex justify-center w-full gap-3">
+        <label className="prelative block mx-auto w-full flex-1 space-y-1.5">
           <input
-            className="peer form-input w-full rounded-md border-2 border-zinc-500 bg-transparent px-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent px-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             name="search"
             onChange={handleChange}
             placeholder="Search"

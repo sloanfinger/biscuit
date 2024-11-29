@@ -65,10 +65,10 @@ export default function Editor({ defaultValue, release }: Props) {
             )}
           </span>
           <figcaption className="flex flex-1 flex-col gap-1">
-            <span className="text-3xl font-bold text-white">
+            <span className="md:text-lg lg:text-3xl font-bold text-white">
               {release.collectionName}
             </span>
-            <span className="text-xl text-zinc-400">{release.artistName}</span>
+            <span className="md:text-md lg:text-xl text-zinc-400">{release.artistName}</span>
           </figcaption>
         </figure>
       </h2>
@@ -91,12 +91,12 @@ export default function Editor({ defaultValue, release }: Props) {
 
         <RatingInput defaultValue={defaultValue.rating} />
 
-        <label className="relative block w-full space-y-1.5">
+        <label className="relative block mx-auto w-full space-y-1.5">
           <span className="block text-sm font-bold uppercase text-white">
             Review
           </span>
           <textarea
-            className="peer form-input w-full rounded-md border-2 border-zinc-500 bg-transparent text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input sm:w-full md:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             defaultValue={defaultValue.content}
             disabled={isPending}
             name="content"
@@ -117,7 +117,7 @@ export default function Editor({ defaultValue, release }: Props) {
         </label>
 
         <button
-          className="grid w-full rounded-md border-2 border-amber-800 bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-lg text-amber-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
+          className="grid md:w-1/3 lg:w-full rounded-md border-2 border-amber-800 bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-lg text-amber-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
           disabled={isPending}
           role="button"
         >

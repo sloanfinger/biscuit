@@ -53,15 +53,15 @@ export default function SignIn() {
       action={formAction}
       className="flex w-full max-w-lg flex-col items-center gap-9 rounded-lg bg-zinc-900 px-5 py-6 shadow-xl sm:gap-12 sm:px-8 sm:py-12"
     >
-      <h2 className="text-3xl font-bold text-white">Welcome Back!</h2>
+      <h2 className="md:text-xl lg:text-3xl font-bold text-white">Welcome Back!</h2>
 
       <fieldset className="w-full space-y-7">
-        <label className="relative block w-full space-y-1.5">
+        <label className="relative block mx-auto w-full space-y-1.5">
           <span className="block text-sm font-bold uppercase text-white">
             Email
           </span>
           <input
-            className="peer form-input w-full rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             disabled={isPending}
             name="email"
             placeholder="you@email.com"
@@ -73,12 +73,12 @@ export default function SignIn() {
           </span>
         </label>
 
-        <label className="relative block w-full space-y-1.5">
+        <label className="relative block mx-auto w-full space-y-1.5">
           <span className="block text-sm font-bold uppercase text-white">
             Password
           </span>
           <input
-            className="peer form-input w-full rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             disabled={isPending}
             name="password"
             placeholder="●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎"
@@ -92,7 +92,7 @@ export default function SignIn() {
       </fieldset>
 
       <button
-        className="grid w-full rounded-md border-2 border-green-800 bg-gradient-to-b from-green-400 to-green-500 px-6 py-2 text-zinc-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
+        className="grid md:w-1/2 lg:w-full rounded-md border-2 border-green-800 bg-gradient-to-b from-green-400 to-green-500 px-6 py-2 text-zinc-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
         disabled={isPending}
         role="button"
       >
