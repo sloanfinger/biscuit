@@ -174,7 +174,7 @@ export default function CreateAccount() {
           <span className="relative block">
             <input
               autoComplete="off"
-              className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 lowercase text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+              className="peer form-input w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 lowercase text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
               disabled={isPending}
               maxLength={16}
               minLength={4}
@@ -237,7 +237,7 @@ export default function CreateAccount() {
           </span>
           <input
             autoComplete="email"
-            className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 lowercase text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 lowercase text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             disabled={isPending}
             name="email"
             placeholder="you@email.com"
@@ -254,7 +254,7 @@ export default function CreateAccount() {
             Password
           </span>
           <input
-            className="peer form-input md:w-3/4 lg:w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent pl-12 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             minLength={8}
             name="password"
             placeholder="●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎●︎"
@@ -273,7 +273,7 @@ export default function CreateAccount() {
             required
             type="checkbox"
           />
-          <span className="text-white">
+          <span className="text-white text-sm lg:text-base">
             I understand and agree to the{" "}
             <Link href="/legal" className="bg-underline" target="_blank">
               Terms of Service
@@ -284,7 +284,7 @@ export default function CreateAccount() {
       </fieldset>
 
       <button
-        className="grid md:w-1/2 lg:w-full rounded-md border-2 border-green-800 bg-gradient-to-b from-green-400 to-green-500 px-6 py-2 text-zinc-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
+        className="grid md:w-1/2 lg:w-3/4 rounded-md border-2 border-green-800 bg-gradient-to-b from-green-400 to-green-500 px-6 py-2 text-zinc-950 disabled:cursor-not-allowed disabled:opacity-80"
         disabled={isPending}
         role="button"
       >
@@ -301,7 +301,7 @@ export default function CreateAccount() {
         </span>
       </button>
 
-      <p className="-mb-2 flex w-full flex-col-reverse items-center justify-center text-zinc-400 sm:-mb-7 sm:mt-3 sm:flex-row">
+      <p className="-mb-2 flex w-full flex-col-reverse items-center justify-center text-zinc-400 sm:-mb-7 sm:mt-3 sm:flex-row text-sm lg:text-base">
         <Link
           className="flex items-center justify-center gap-2 bg-underline"
           href="/login"
