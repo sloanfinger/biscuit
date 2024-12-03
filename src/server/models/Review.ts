@@ -16,8 +16,8 @@ const Review = model("Review", () =>
     },
     { timestamps: true },
   )
-    .index({ owner: 1, releaseId: 1 }, { unique: true })
-    .index({ owner: 1, artistId: 1 }),
+    .index({ author: 1, releaseId: 1 }, { unique: true })
+    .index({ author: 1, artistId: 1 }),
 );
 
 export default Review;
