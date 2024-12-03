@@ -229,14 +229,6 @@ export default async function ProfilePage({ params }: Props) {
           </div>
         </section>
         <section>
-          <style>
-            {`
-            .reviews-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8x;
-            backgrou}`}
-          </style>
           <div className="mx-auto grid w-full max-w-6xl md:grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
             <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
               Popular Reviews
