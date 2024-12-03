@@ -218,7 +218,7 @@ export default async function ProfilePage({ params }: Props) {
         )}
 
         <section>
-          <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
+          <div className="mx-auto grid w-full max-w-6xl md:grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
             <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
               Recent Reviews
               <PiRssBold className="-mb-0.5 -ml-0.5"/>
@@ -229,7 +229,15 @@ export default async function ProfilePage({ params }: Props) {
           </div>
         </section>
         <section>
-          <div className="mx-auto grid w-full max-w-6xl grid-cols-2 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
+          <style>
+            {`
+            .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8x;
+            backgrou}`}
+          </style>
+          <div className="mx-auto grid w-full max-w-6xl md:grid-cols-2 sm:grid-cols-1 gap-x-4 gap-y-8 rounded-lg bg-zinc-900 px-24 py-8">
             <h2 className="col-span-full flex items-center gap-3 font-bold uppercase text-amber-400">
               Popular Reviews
               <PiRssBold className="-mb-0.5 -ml-0.5"/>
