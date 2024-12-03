@@ -1,4 +1,3 @@
 {
-  //I dont know what this does but npm run lint does not recognize it
-  //"plugins": ["prettier-plugin-tailwindcss"]
+  "plugins": ["prettier-plugin-tailwindcss"]
 }
