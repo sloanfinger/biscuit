@@ -53,7 +53,7 @@ export default function Editor({ defaultValue, release }: Props) {
     <form className="contents" action={formAction}>
       <h2 className="contents">
         <figure className="flex w-full items-center gap-6">
-          <span className="relative size-20 md:size-25 lg:size-28 overflow-hidden rounded-sm">
+          <span className="md:size-25 relative size-20 overflow-hidden rounded-sm lg:size-28">
             {release.artworkUrl100 && (
               <Image
                 alt=""
@@ -65,10 +65,12 @@ export default function Editor({ defaultValue, release }: Props) {
             )}
           </span>
           <figcaption className="flex flex-1 flex-col gap-1">
-            <span className="md:text-lg lg:text-3xl font-bold text-white">
+            <span className="font-bold text-white md:text-lg lg:text-3xl">
               {release.collectionName}
             </span>
-            <span className="text-md md:text-lg lg:text-xl text-zinc-400">{release.artistName}</span>
+            <span className="text-md text-zinc-400 md:text-lg lg:text-xl">
+              {release.artistName}
+            </span>
           </figcaption>
         </figure>
       </h2>
@@ -91,12 +93,12 @@ export default function Editor({ defaultValue, release }: Props) {
 
         <RatingInput defaultValue={defaultValue.rating} />
 
-        <label className="relative block mx-auto w-full space-y-1.5">
+        <label className="relative mx-auto block w-full space-y-1.5">
           <span className="block text-sm font-bold uppercase text-white">
             Review
           </span>
           <textarea
-            className="peer form-input w-full p-2 rounded-md border-2 border-zinc-500 bg-transparent text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
+            className="peer form-input w-full rounded-md border-2 border-zinc-500 bg-transparent p-2 text-white placeholder:text-zinc-500 focus:border-amber-400 focus:ring-amber-300/25 disabled:cursor-not-allowed disabled:opacity-80"
             defaultValue={defaultValue.content}
             disabled={isPending}
             name="content"
@@ -105,7 +107,7 @@ export default function Editor({ defaultValue, release }: Props) {
           />
         </label>
 
-        <label className="flex items-center gap-4 lg:self-start pb-1">
+        <label className="flex items-center gap-4 pb-1 lg:self-start">
           <input
             className="form-checkbox h-6 w-6 rounded-sm border-2 bg-zinc-900 text-orange-700 transition-colors hover:bg-zinc-700"
             checked={shouldPublish}
@@ -113,11 +115,13 @@ export default function Editor({ defaultValue, release }: Props) {
             name="shouldPublish"
             type="checkbox"
           />
-          <span className="text-white text-sm lg:text-base">Publish Review to Profile</span>
+          <span className="text-sm text-white lg:text-base">
+            Publish Review to Profile
+          </span>
         </label>
 
         <button
-          className="grid md:w-1/3 lg:w-full rounded-md border-2 border-amber-800 bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-lg text-amber-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto"
+          className="grid rounded-md border-2 border-amber-800 bg-gradient-to-b from-amber-400 to-amber-500 px-8 py-2.5 text-lg text-amber-950 disabled:cursor-not-allowed disabled:opacity-80 sm:w-auto md:w-1/3 lg:w-full"
           disabled={isPending}
           role="button"
         >
