@@ -54,7 +54,7 @@ export default async function ProfilePage({ params }: Props) {
           className="absolute top-0 -z-10 size-full object-cover"
           height={720}
           width={1280}
-          src={user.profile.profileBanner}
+          src={user.profile.profileBanner ?? "https://picsum.photos/seed/3/1280/720"}
         />
 
         <div className="absolute inset-0 -z-10 size-full bg-gradient-to-b from-zinc-950/60 to-zinc-950" />
